@@ -1,0 +1,51 @@
+class Matrix{
+
+    constructor(rows, columns){
+        this.rows = rows;
+        this.columns = columns;
+        this.data = [];
+
+        // Bidimensional matrix
+        for(let i=0 ; i<rows ; i++){
+            let array = [];
+            for(let j=0 ; j<columns ; j++){
+                // Add random numbers, round down
+                array.push(Math.floor(Math.random()*10));
+            }
+            
+            // Add to data (matrix behavior)
+            this.data.push(array);
+
+        }
+    }
+
+    // Overrides js map method
+    // Call a function for each element
+    map(func){
+        this.data = this.data.map((array,indexI)=>{
+            return array.map((number, indexJ) =>{
+                //console.log(indexI, indexJ);
+                return func(number, indexI, indexJ);
+            })
+        })
+
+        // Return object
+        return this;
+    }
+
+    // Add 2 matrix, same dimension
+    static add(matrixA, matrixB){
+
+        var matrix = new Matrix(matrixA.rows, matrixA.columns);
+
+        console.log(matrixA.data);
+        console.log(matrixB.data);
+
+        matrix.map((element, i, j)=>{
+            return matrixA.data[i][j] + matrixB.data[i][j]
+        });
+
+        console.log(matrix.data);
+
+    }
+}
