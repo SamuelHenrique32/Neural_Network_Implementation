@@ -20,6 +20,18 @@ class Matrix{
         }
     }
 
+    // Convert entry to column
+    static convertArrayToMatrix(array){
+
+        let matrix = new Matrix(array.length, 1);
+
+        matrix.map((element, i, j) => {
+            return array[i];
+        })
+
+        return matrix;
+    }
+
     print(){
 
         console.table(this.data);
@@ -32,6 +44,21 @@ class Matrix{
             // Generic mode to generate (could be any other)
             return Math.random()*2 - 1;
         });
+    }
+
+    // Static function overrides non static
+    static map(matrixA, func){
+
+        let matrix = new Matrix(matrixA.rows, matrixB.rows)
+
+        matrix.data = matrix.data.map((array,indexI)=>{
+            return array.map((number, indexJ) =>{
+                return func(number, indexI, indexJ);
+            })
+        })
+
+        // Return object
+        return matrix;
     }
 
     // Overrides js map method
@@ -68,7 +95,7 @@ class Matrix{
             
             let sum = 0;
             
-            for(let k=0; k<matrixB.rows ; k++){
+            for(let k=0; k<matrixA.columns ; k++){
                 let element1 = matrixA.data[i][k];
                 let element2 = matrixB.data[k][j];
                 sum += element1*element2;

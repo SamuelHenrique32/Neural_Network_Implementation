@@ -6,8 +6,14 @@ function setup(){
     createCanvas(500,500);
     background(0);
 
-    var neuralNetwork = new NeuralNetwork(1,3,1);
+    // Instanciate neural network
+    var neuralNetwork = new NeuralNetwork(1,3,5);
 
+    // Test
+    var array = [1, 2];
+    
+    // Call feedforward method
+    neuralNetwork.feedForward(array);
 }
 
 // Executed 30x/s
