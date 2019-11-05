@@ -24,7 +24,7 @@ function setup(){
     matrixA.print();
     matrixB.print();
     
-    let matrixC = Matrix.scalarMultiply(matrixA, 10);
+    let matrixC = Matrix.transpose(matrixA);
 
     matrixC.print();
 }

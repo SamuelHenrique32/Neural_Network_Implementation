@@ -78,10 +78,10 @@ class Matrix{
 
     static transpose(matrixA){
 
-        var matrix = new Matrix(A.columns, A.rows);
+        var matrix = new Matrix(matrixA.columns, matrixA.rows);
 
         matrix.map((number, indexI, indexJ)=>{
-            return A.data[indexJ][indexI];
+            return matrixA.data[indexJ][indexI];
         });
 
         return matrix;
