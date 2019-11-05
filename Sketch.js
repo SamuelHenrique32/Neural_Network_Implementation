@@ -24,7 +24,7 @@ function setup(){
     matrixA.print();
     matrixB.print();
     
-    let matrixC = Matrix.hadamardProduct(matrixA, matrixB);
+    let matrixC = Matrix.scalarMultiply(matrixA, 10);
 
     matrixC.print();
 }
