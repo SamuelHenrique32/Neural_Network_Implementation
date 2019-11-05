@@ -24,7 +24,7 @@ function setup(){
     matrixA.print();
     matrixB.print();
     
-    let matrixC = Matrix.transpose(matrixA);
+    let matrixC = Matrix.sub(matrixA, matrixB);
 
     matrixC.print();
 }
