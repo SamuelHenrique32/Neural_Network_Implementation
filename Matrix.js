@@ -42,14 +42,15 @@ class Matrix{
         this.map((element, i, j)=>{
 
             // Generic mode to generate (could be any other)
-            return Math.random()*2 - 1;
+            //return Math.random()*2 - 1;
+            return Math.floor(Math.random()*10);
         });
     }
 
     // Static function overrides non static
     static map(matrixA, func){
 
-        let matrix = new Matrix(matrixA.rows, matrixB.rows)
+        let matrix = new Matrix(matrixA.rows, matrixB.columns)
 
         matrix.data = matrix.data.map((array,indexI)=>{
             return array.map((number, indexJ) =>{
@@ -75,6 +76,39 @@ class Matrix{
         return this;
     }
 
+    static transpose(matrixA){
+
+        var matrix = new Matrix(A.columns, A.rows);
+
+        matrix.map((number, indexI, indexJ)=>{
+            return A.data[indexJ][indexI];
+        });
+
+        return matrix;
+    }
+
+    static scalarMultiply(matrixA, scalar){
+
+        var matrix = new Matrix(matrixA.rows, matrixA.columns);
+
+        matrix.map((element, i, j)=>{
+            return matrixA.data[i][j] * scalar;
+        });
+
+        return matrix;
+    }
+
+    static hadamardProduct(matrixA, matrixB){
+
+        var matrix = new Matrix(matrixA.rows, matrixA.columns);
+
+        matrix.map((element, i, j)=>{
+            return matrixA.data[i][j] * matrixB.data[i][j]
+        });
+
+        return matrix;
+    }
+
     // Add 2 matrix, same dimension
     static add(matrixA, matrixB){
 
@@ -82,6 +116,18 @@ class Matrix{
 
         matrix.map((element, i, j)=>{
             return matrixA.data[i][j] + matrixB.data[i][j]
+        });
+
+        return matrix;
+    }
+
+    // Subtract 2 matrix, same dimension
+    static sub(matrixA, matrixB){
+
+        var matrix = new Matrix(matrixA.rows, matrixA.columns);
+
+        matrix.map((element, i, j)=>{
+            return matrixA.data[i][j] - matrixB.data[i][j]
         });
 
         return matrix;

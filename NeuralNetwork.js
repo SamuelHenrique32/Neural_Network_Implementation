@@ -45,7 +45,7 @@ class NeuralNetwork{
         let output = Matrix.multiply(this.weightsIntermediaryOutput, intermediary);
         output = Matrix.add(output, this.biasIntermediaryOutput);
         output.map(sigmoid);
-        output.print();
+        return output;
         // ------------------------------------------------------------
         
     }
