@@ -72,7 +72,7 @@ class NeuralNetwork{
 
         let intermediaryT = Matrix.transpose(intermediary);
 
-        let gradient = Matrix.hadamardProduct(outputError, derivatedOutput);
+        let gradient = Matrix.hadamardProduct(derivatedOutput, outputError);
         gradient = Matrix.scalarMultiply(gradient, this.learningRate);
 
         // Adjust bias
@@ -90,7 +90,7 @@ class NeuralNetwork{
         let dIntermediary = Matrix.map(intermediary,dSigmoid);
         let inputT = Matrix.transpose(input);
 
-        let gradientIntermediary = Matrix.hadamardProduct(intermediaryError, dIntermediary);
+        let gradientIntermediary = Matrix.hadamardProduct(dIntermediary, intermediaryError);
         gradientIntermediary = Matrix.scalarMultiply(gradientIntermediary, this.learningRate);
 
         // Adjust bias
