@@ -1,3 +1,4 @@
+var isTraining = true;
 // P5 functions
 
 // Executed at browser setup (1x)
@@ -7,29 +8,35 @@ function setup(){
     background(0);
 
     // Instanciate neural network
-    //var neuralNetwork = new NeuralNetwork(1,3,5);
+    neuralNetwork = new NeuralNetwork(2,3,1);
 
     // Test
-    //var array = [1, 2];
-    
-    // Call feedforward method
-    //neuralNetwork.feedForward(array);
-
-    let matrixA = new Matrix(2,1);
-    let matrixB = new Matrix(2,1);
-
-    matrixA.randomize();
-    matrixB.randomize();
-
-    matrixA.print();
-    matrixB.print();
-    
-    let matrixC = Matrix.sub(matrixA, matrixB);
-
-    matrixC.print();
+    // [1,1] expected [0]
+    // [1,0] expected [1]...
+    dataset = {
+        inputs:
+            [[1, 1],
+            [1, 0],
+            [0, 1],
+            [0, 0]],
+        outputs:
+            [[0],
+            [1],
+            [1],
+            [0]]
+    }
 }
 
 // Executed 30x/s
-function draw(){
-
+function draw() {
+    if (isTraining) {
+        for (var i = 0; i < 10000; i++) {
+            var index = floor(random(4));
+            neuralNetwork.train(dataset.inputs[index], dataset.outputs[index]);
+        }
+        if (neuralNetwork.predict([0, 0])[0] < 0.04 && neuralNetwork.predict([1, 0])[0] > 0.98) {
+            isTraining = false;
+            console.log("Terminou");
+        }
+    }
 }

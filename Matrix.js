@@ -32,6 +32,17 @@ class Matrix{
         return matrix;
     }
 
+    static convertMatrixToArray(object){
+
+        let array = [];
+
+        object.map((element, i, j) => {
+            array.push(element);
+        })
+
+        return array;
+    }
+
     print(){
 
         console.table(this.data);
@@ -42,23 +53,20 @@ class Matrix{
         this.map((element, i, j)=>{
 
             // Generic mode to generate (could be any other)
-            //return Math.random()*2 - 1;
-            return Math.floor(Math.random()*10);
+            return Math.random()*2 - 1;
         });
     }
 
     // Static function overrides non static
-    static map(matrixA, func){
+    static map(matrixA, func) {
+        let matrix = new Matrix(matrixA.rows, matrixA.columns);
 
-        let matrix = new Matrix(matrixA.rows, matrixB.columns)
-
-        matrix.data = matrix.data.map((array,indexI)=>{
-            return array.map((number, indexJ) =>{
-                return func(number, indexI, indexJ);
+        matrix.data = matrixA.data.map((array, i) => {
+            return array.map((num, j) => {
+                return func(num, i, j);
             })
         })
 
-        // Return object
         return matrix;
     }
 
