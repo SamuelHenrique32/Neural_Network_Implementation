@@ -96,6 +96,7 @@ class NeuralNetwork{
         // Adjust bias
         this.biasEntryIntermediary = Matrix.add(this.biasEntryIntermediary, gradientIntermediary);
 
+        // Error between two layers
         let weightsEntryIntermediaryDeltas = Matrix.multiply(gradientIntermediary, inputT);
         this.weightsEntryIntermediary = Matrix.add(this.weightsEntryIntermediary, weightsEntryIntermediaryDeltas);
         
