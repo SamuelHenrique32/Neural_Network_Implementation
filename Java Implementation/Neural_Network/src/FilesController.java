@@ -34,6 +34,8 @@ public class FilesController {
 				// Read one line
 				String currentLine = buffRead.readLine();
 				
+				//System.out.println("Li: " + currentLine);
+				
 				// TODO Send to neural network (verify if it's the best way)
 				NeuralNetwork.handleInput(currentLine, isTest);
 				
