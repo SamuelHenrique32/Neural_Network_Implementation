@@ -137,13 +137,30 @@ public class NeuralNetwork {
 			for (int i = 0; i < fileController.getQuantityOfLinesDataset()-1; i++) {
 
 				this.copyLineReadToLayers(fileController.getDatasetLine(i), eO);
+				
+				// Calls method of feedForward to the given input
+				this.feedForward();
+				
+				// Calls method with expected output
+				this.backPropagation(e0);
 			}
+			err = this.calculateError();
+			System.out.println("Taxa de erro da iteracao " + currentIteration + ": " + err);
 			
 			currentIteration++;
 		}
 
 		return error;
 	}
+	
+	// feedForward calculates the output of hidden layer and output layer
+	private void feedForward() {
+		// Hidden layer
+        this.setOutputHiddenLayer();
+        
+        // Output layer
+        this.setOutputOutputLayer();
+    }
 	
 	// Copy the line read to input layer and to expected output data structures
 	private void copyLineReadToLayers(String datasetLine, Double[] expectedOutput) {
@@ -182,17 +199,6 @@ public class NeuralNetwork {
 	}
 
 	public void test() {
-		
-	}
-	
-	public void handleInput(String currentLine, boolean isTesting) {
-		
-			
-		
-		
-		
-
-
 		
 	}
 	
