@@ -5,22 +5,34 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 // Read and write data in the files
-public class FilesController {
+public class FileController {
 	
 	private String fullFileName;
 	private int quantityOfLinesDataset;
+	// Store all lines of dataset
+	private String[] dataset;
 	
 	// Constructor
-	public FilesController() throws IOException {
+	public FileController() throws IOException {
 		
 		// Full filename
-		fullFileName = Params.getParamFilesDirectory();
+		this.fullFileName = Params.getFilesDirectory();
 		
 		// Quantity of lines in dataset file
 		this.quantityOfLinesDataset = getDatasetLinesQuantity();
+		
+		// Store all lines of dataset
+		this.dataset = new String[this.quantityOfLinesDataset];
 	}
-
-	public void readFile(NeuralNetwork NeuralNetwork, String fileName, boolean isTest) throws IOException{
+	
+	public int getQuantityOfLinesDataset() {
+		return quantityOfLinesDataset;
+	}
+	
+	public void readDataset(String fileName) throws IOException{
+		
+		// Current line
+		int nroCurrentLine = 0;
 		
 		// Try to read file
 		try {
@@ -28,7 +40,7 @@ public class FilesController {
 			// Open file to read
 			BufferedReader buffRead = new BufferedReader(new FileReader(fullFileName.concat(fileName)));
 			
-			// Read each line
+			// For each line
 			while(buffRead.ready()) {
 				
 				// Read one line
@@ -36,8 +48,10 @@ public class FilesController {
 				
 				//System.out.println("Li: " + currentLine);
 				
-				// TODO Send to neural network (verify if it's the best way)
-				NeuralNetwork.handleInput(currentLine, isTest);
+				// Store the line
+				this.dataset[nroCurrentLine] = currentLine;
+				
+				nroCurrentLine++;
 				
 			}
 			
@@ -51,11 +65,12 @@ public class FilesController {
 		//System.out.println(this.quantityOfLinesDataset);
 	}
 	
+	// Get the quantity of lines in the dataset file
 	private int getDatasetLinesQuantity() throws IOException {
 		
 		int linesQuantity = 0;
 		
-		BufferedReader buffRead = new BufferedReader(new FileReader(fullFileName.concat(Params.getParamTrainingFile())));
+		BufferedReader buffRead = new BufferedReader(new FileReader(fullFileName.concat(Params.getTrainingFile())));
 		
 		try {
 			while(buffRead.readLine() != null)
@@ -68,5 +83,14 @@ public class FilesController {
 		buffRead.close();
 		
 		return linesQuantity;
+	}
+	
+	// Returns a specific line of dataset
+	public String getDatasetLine(int lineNumber) {
+		
+		if(lineNumber >=0 && lineNumber<=quantityOfLinesDataset)
+			return this.dataset[lineNumber];
+		else
+			return null;
 	}
 }
