@@ -18,7 +18,7 @@ public class NeuralNetwork {
 	private double[] hiddenLayer;
 	
 	// Output layer
-	private double[] outputLayer;
+	private Double[] outputLayer;
 	
 	// TODO initialize
 	// Input values
@@ -59,7 +59,7 @@ public class NeuralNetwork {
 		this.hiddenLayer = new double[Params.getHiddenNeuronsQuantity()+1];
 		
 		// Output of output layer
-		this.outputLayer = new double[Params.getOutputNeuronsQuantity()];
+		this.outputLayer = new Double[Params.getOutputNeuronsQuantity()];
 		
 		// Current iteration
 		this.currentIteration = 0;
@@ -82,7 +82,6 @@ public class NeuralNetwork {
         this.sigmaForZ = new Double[Params.getOutputNeuronsQuantity()];
 		
 		this.init();
-		//this.train();
 	}
 	
 	private void init() throws IOException {
@@ -142,7 +141,7 @@ public class NeuralNetwork {
 				this.feedForward();
 				
 				// Calls method with expected output
-				this.backPropagation(e0);
+				this.backPropagation(eO);
 			}
 			err = this.calculateError();
 			System.out.println("Taxa de erro da iteracao " + currentIteration + ": " + err);
@@ -159,7 +158,116 @@ public class NeuralNetwork {
         this.setOutputHiddenLayer();
         
         // Output layer
-        this.setOutputOutputLayer();
+        this.setOutputFinalLayer();
+    }
+	
+	// Calculates the output of hidden layer
+	private void setOutputHiddenLayer() {
+		
+		// Set zero values is array
+		for (int i = 0; i < Params.getHiddenNeuronsQuantity(); i++) {
+	            this.sigmaForY[i] = 0.0;
+	    }
+		
+		// Generate the output value
+		for (int j = 0; j < Params.getHiddenNeuronsQuantity(); j++) {
+            for (int i = 0; i < Params.getInputNeuronsQuantity() + 1; i++) {
+            	// Try to multiply the values
+                try {
+                	// Multiply the values
+                    this.sigmaForY[j] = this.sigmaForY[j] + this.inputLayer[i] * this.weightsMatrixInputHidden[i][j];
+                } catch (Exception e) {
+                	// If an error has ocurred
+                    System.out.println("erro" + e);
+                }
+            }
+        }		
+		
+		// Apply the activation function
+		for (int i = 0; i < Params.getHiddenNeuronsQuantity(); i++) {
+			
+			this.hiddenLayer[i] = this.sigmoidal(this.sigmaForY[i]);
+			
+			//System.out.println(this.hiddenLayer[i]);
+		}
+	}
+	
+	// Calculates the values of output layer
+	private void setOutputFinalLayer() {
+		// Set zero values is array
+		for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
+			this.sigmaForZ[i] = 0.0;
+		}
+		
+		// Generate the output value
+		for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
+            for (int j = 0; j < Params.getHiddenNeuronsQuantity() + 1; j++) {
+                this.sigmaForZ[i] = this.sigmaForZ[i] + this.hiddenLayer[j] * this.weightsMatrixHiddenOutput[j][i];
+            }
+        }
+		
+		// Apply the activation function
+		for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
+			this.outputLayer[i] = this.sigmoidal(this.sigmaForZ[i]);
+        }
+	}
+	
+	// Calculates backPropagation
+	private void backPropagation(Double[] expectedOutput) {
+		
+		Double[] values = new Double[Params.getOutputNeuronsQuantity()];
+		
+		// Calculate the values
+		for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
+			
+			values[i] = (expectedOutput[i] - this.outputLayer[i]) * this.sigmoidalDerivate(this.sigmaForZ[i]);
+			
+			System.out.println(expectedOutput[i]);
+		}
+		
+		for (int i = 0; i < Params.getHiddenNeuronsQuantity() + 1; i++) { 
+            for (int j = 0; j < Params.getOutputNeuronsQuantity(); j++) {                  
+                this.deltaw2[i][j] = Params.getLearningRate() * values[j] * this.hiddenLayer[i];
+            }
+        }
+		
+		Double[] fHNet = new Double[Params.getHiddenNeuronsQuantity()];
+        for (int j = 0; j < Params.getHiddenNeuronsQuantity(); j++) {
+            fHNet[j] = 0.0;
+            for (int k = 0; k < Params.getExpectedOutputSize(); k++) {
+                fHNet[j] = fHNet[j] + (values[k] * this.weightsMatrixHiddenOutput[j][k]);
+            }
+        }
+        
+        Double[] fH = new Double[Params.getHiddenNeuronsQuantity()];
+        for (int i = 0; i < Params.getHiddenNeuronsQuantity() ; i++) {
+        	
+        	fH[i] = fHNet[i] * this.sigmoidalDerivate(this.sigmaForY[i]);
+        }
+        
+        for (int i = 0; i < Params.getInputNeuronsQuantity() + 1; i++) {
+            for (int j = 0; j < Params.getHiddenNeuronsQuantity(); j++) {
+                this.deltaw1[i][j] = Params.getLearningRate() * fH[j] * this.inputLayer[i];
+            }
+        }
+        
+        // Recalculate weights
+        this.changeWeights();
+	}
+	
+	// Recalculate weights
+	private void changeWeights() {
+        for (int i = 0; i < Params.getHiddenNeuronsQuantity() + 1; i++) { 
+            for (int j = 0; j < Params.getExpectedOutputSize(); j++) {    
+                this.weightsMatrixHiddenOutput[i][j] = this.weightsMatrixHiddenOutput[i][j] + this.deltaw2[i][j];
+            }
+        }
+        
+        for (int i = 0; i < Params.getInputNeuronsQuantity() + 1; i++) {
+            for (int j = 0; j < Params.getHiddenNeuronsQuantity(); j++) {
+                this.weightsMatrixInputHidden[i][j] = this.weightsMatrixInputHidden[i][j] + this.deltaw1[i][j];
+            }
+        }
     }
 	
 	// Copy the line read to input layer and to expected output data structures
@@ -167,6 +275,7 @@ public class NeuralNetwork {
 		
 		boolean foudComma = false;
 		int expectedOutputIndex = 0;
+		String[] expectedOutputString;
 		
 		// Put each character of the received string at inputLayerValues[index]
 		for(int i=0 ; i < datasetLine.length() ; i++) {
@@ -174,8 +283,14 @@ public class NeuralNetwork {
 			
 			if(datasetLine.charAt(i) == ',') {
 				
-				System.out.println("Encontrei a virgula na pos " + i + "\n");
+				//System.out.println("Encontrei a virgula na pos " + i + "\n");
 				foudComma = true;
+				
+				expectedOutputString = datasetLine.split(",");
+				
+				//System.out.println(expectedOutputString[0]);
+				//System.out.println(expectedOutputString[1]);
+				
 				continue;
 			}
 			
@@ -189,13 +304,13 @@ public class NeuralNetwork {
 			}			
 		}
 		
-		for(int i=0 ; i< Params.getInputNeuronsQuantity() ; i++) {
+		/*for(int i=0 ; i< Params.getInputNeuronsQuantity() ; i++) {
 			System.out.println("Input layer pos[ " + i + "] = " + inputLayer[i]);
-		}
+		}*/
 		
-		for(int i=0 ; i< Params.getExpectedOutputSize() ; i++) {
+		/*for(int i=0 ; i< Params.getExpectedOutputSize() ; i++) {
 			System.out.println("Expected output pos[ " + i + "] = " + expectedOutput[i]);
-		}
+		}*/
 	}
 
 	public void test() {
@@ -218,5 +333,11 @@ public class NeuralNetwork {
 	// Activation function
 	private double sigmoidal(double sum) {
 		return (1 / (1 + Math.exp(-sum)));
+	}
+	
+	// Calculates the derivate of sigmoidal activation function 
+	private double sigmoidalDerivate(Double value) {
+		
+		return this.sigmoidal(value) * (1 - this.sigmoidal(value));
 	}
 }

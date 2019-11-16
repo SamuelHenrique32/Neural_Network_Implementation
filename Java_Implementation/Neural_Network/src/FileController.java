@@ -76,7 +76,6 @@ public class FileController {
 			while(buffRead.readLine() != null)
 				linesQuantity++;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
