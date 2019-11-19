@@ -238,7 +238,7 @@ public class NeuralNetwork {
 		// Calculate the values
 		for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
 			
-			System.out.println(expectedOutput[i]);
+			//System.out.println(expectedOutput[i]);
 			
 			values[i] = (expectedOutput[i] - this.outputLayer[i]) * this.sigmoidalDerivate(this.sigmaForZ[i]);			
 			
@@ -324,7 +324,8 @@ public class NeuralNetwork {
 		boolean foudComma = false;
 		boolean isLastNumber = true;
 		int expectedOutputIndex = 0;
-		String[] expectedOutputString;
+		String[] cutLines;
+		String expectedOutputString = new String();
 		String currentLine;
 		
 		//System.out.println("Linhas no arquivo: " + fileController.getQuantityOfLinesDataset());
@@ -336,26 +337,30 @@ public class NeuralNetwork {
 			// Get current line
 			currentLine = this.fileController.getDatasetLine(i);
 			
-			//System.out.println("current line: " + currentLine);
-			
 			// Handle each character of current line
-			for(int j=0 ; j < currentLine.length() -1 ; j++) {
+			for(int j=0 ; j < currentLine.length() -1; j++) {
 				
 				int posVerifyComma = j+1;
 				
-				System.out.println("POS: " + posVerifyComma);
+				//System.out.println("POS: " + posVerifyComma);
 				
 				if(currentLine.charAt(posVerifyComma) == ',') {
 					
 					//System.out.println("Encontrei a virgula na pos " + i + "\n");
 					foudComma = true;
 					
-					expectedOutputString = currentLine.split(",");
+					cutLines = currentLine.split(",");
+					
+					//System.out.println(cutLines[0]);
+					//System.out.println(cutLines[1]);
+					
+					expectedOutputString = cutLines[1];
+					
+					//System.out.println(expectedOutputString);
 					
 					// Reset pos
 					expectedOutputIndex = 0;
 					
-					//continue;
 				}
 				
 				if(!foudComma) {
@@ -364,7 +369,7 @@ public class NeuralNetwork {
 					
 					//System.out.println("i:" + i);
 					//System.out.println("j:" + j);
-					System.out.println("if=" + currentLine.charAt(j));					
+					//System.out.println("if=" + currentLine.charAt(j));					
 				}
 				else {
 					
@@ -375,12 +380,19 @@ public class NeuralNetwork {
 						
 						//System.out.println("i:" + i);
 						//System.out.println("j:" + j);
-						System.out.println("else=" + currentLine.charAt(j));	
+						//System.out.println("else=" + currentLine.charAt(j));	
 					}
 					else {
+						
 						// Copy to expected output
-						this.expectedOutput[i][expectedOutputIndex] = (double) Character.getNumericValue(currentLine.charAt(j));
-						expectedOutputIndex++;			
+						this.expectedOutput[i][expectedOutputIndex] = (double) Character.getNumericValue(expectedOutputString.charAt(expectedOutputIndex));
+						
+						//System.out.println(expectedOutputString);
+						
+						//System.out.println(this.expectedOutput[i][expectedOutputIndex]);
+						//System.out.println("Index: " + expectedOutputIndex);
+						
+						expectedOutputIndex++;						
 					}								
 				}			
 			}			
@@ -389,15 +401,22 @@ public class NeuralNetwork {
 		for (int i = 0; i < fileController.getQuantityOfLinesDataset(); i++) {
 			for(int j=0 ; j< Params.getInputNeuronsQuantity() ; j++) {
 				System.out.println("Stored input layer pos[" + i + "] [" + j + "] = " + this.storedInputLayer[i][j]);
-			}	
+				
+			}
+			
+			System.out.println("Mudou de linha\n\n");
 		}
 		
 	
 		for(int i=0 ; i< fileController.getQuantityOfLinesDataset(); i++) {
-			for(int j=0 ; j< Params.getOutputNeuronsQuantity()-1 ; j++) {
+			for(int j=0 ; j< Params.getOutputNeuronsQuantity() ; j++) {
 				System.out.println("Expected input layer pos[" + i + "] [" + j + "] = " + this.expectedOutput[i][j]);
 			}
+			
+			System.out.println("Mudou de linha\n\n");
 		}
+		
+		System.out.println("Terminou\n\n");
 		
 	}
 	
