@@ -159,7 +159,8 @@ public class NeuralNetwork {
 				this.feedForward();
 				
 				// Calls method with expected output
-				this.backPropagation(eO);
+				//this.backPropagation(eO);
+				this.backPropagation(this.expectedOutput[i]);
 			}
 			err = this.calculateError();
 			System.out.println("Taxa de erro da iteracao " + currentIteration + ": " + err);
@@ -231,7 +232,7 @@ public class NeuralNetwork {
 	}
 	
 	// Calculates backPropagation
-	private void backPropagation(Double[] expectedOutput) {
+	private void backPropagation(Double[] expectedOutputParam) {
 		
 		Double[] values = new Double[Params.getOutputNeuronsQuantity()];
 		
@@ -240,7 +241,7 @@ public class NeuralNetwork {
 			
 			//System.out.println(expectedOutput[i]);
 			
-			values[i] = (expectedOutput[i] - this.outputLayer[i]) * this.sigmoidalDerivate(this.sigmaForZ[i]);			
+			values[i] = (expectedOutputParam[i] - this.outputLayer[i]) * this.sigmoidalDerivate(this.sigmaForZ[i]);			
 			
 		}
 		
@@ -287,7 +288,8 @@ public class NeuralNetwork {
 			this.feedForward();
 			
 			for (int j=0; j < Params.getOutputNeuronsQuantity(); j++) {
-				err += Math.pow((eO[j] - this.outputLayer[j]), 2);
+				//err += Math.pow((eO[j] - this.outputLayer[j]), 2);
+				err += Math.pow((this.expectedOutput[i][j] - this.outputLayer[j]), 2);
 	        }
 			
 			err /= Params.getOutputNeuronsQuantity();
@@ -398,7 +400,7 @@ public class NeuralNetwork {
 			}			
 		}
 		
-		for (int i = 0; i < fileController.getQuantityOfLinesDataset(); i++) {
+		/*for (int i = 0; i < fileController.getQuantityOfLinesDataset(); i++) {
 			for(int j=0 ; j< Params.getInputNeuronsQuantity() ; j++) {
 				System.out.println("Stored input layer pos[" + i + "] [" + j + "] = " + this.storedInputLayer[i][j]);
 				
@@ -416,7 +418,7 @@ public class NeuralNetwork {
 			System.out.println("Mudou de linha\n\n");
 		}
 		
-		System.out.println("Terminou\n\n");
+		System.out.println("Terminou\n\n");*/
 		
 	}
 	

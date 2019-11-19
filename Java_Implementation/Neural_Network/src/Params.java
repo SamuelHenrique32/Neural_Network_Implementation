@@ -46,11 +46,11 @@ public class Params {
 	
 	private static int outputNeuronsQuantity = 36;
 	
-	private static double learningRate = 0.5;
+	private static double learningRate = 0.6;
 	
 	private static int maxIterations = 2000;
 	
-	private static int expectedOutputSize = 3;
+	private static int expectedOutputSize = 36;
 
 	public static int getInputNeuronsQuantity() {
 		return inputNeuronsQuantity;
