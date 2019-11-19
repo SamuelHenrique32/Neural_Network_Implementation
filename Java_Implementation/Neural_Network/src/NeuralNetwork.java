@@ -11,6 +11,9 @@ public class NeuralNetwork {
 	// Weights matrix hidden -> output
 	private double[][] weightsMatrixHiddenOutput;
 	
+	// Stored input layer
+	private double[][] storedInputLayer;
+	
 	// Input layer
 	private double[] inputLayer;
 	
@@ -37,6 +40,9 @@ public class NeuralNetwork {
 	// Processed lines of file
 	private int processedLines;
 	
+	// File controller
+	private FileController fileController;
+	
 	// TODO why?
 	private Double[] sigmaForY;
 	private Double[] sigmaForZ;
@@ -46,13 +52,22 @@ public class NeuralNetwork {
 	
 	public NeuralNetwork() throws IOException {
 		
+		// File controller
+		this.fileController = new FileController();
+		
+		// Read the dataset
+        fileController.readDataset(Params.getTrainingFile());
+		
 		// Weights matrix input hidden
 		//this.weightsMatrixInputHidden = new double[Params.getParamsInputNeuronsQuantity()][Params.getParamsHiddenNeuronsQuantity()];
 		
 		// Weights matrix hidden output
 		//this.weightsMatrixHiddenOutput = new double[Params.getParamsHiddenNeuronsQuantity()][Params.getParamsOutputNeuronsQuantity()];
 		
-		//Input layer
+		// Stored input layer
+		this.storedInputLayer = new double[fileController.getQuantityOfLinesDataset()][Params.getInputNeuronsQuantity()];
+		
+		// Current input layer
 		this.inputLayer = new double[Params.getInputNeuronsQuantity()+1];
 		
 		// Hidden layer
@@ -68,7 +83,7 @@ public class NeuralNetwork {
 		this.confusionMatrix = new int[Params.getOutputNeuronsQuantity()][Params.getOutputNeuronsQuantity()];
 		
 		// Processed lines of file
-		this.processedLines = 0;
+		this.processedLines = 0;		
 		
 		//TODO
 		// Why?
@@ -76,10 +91,10 @@ public class NeuralNetwork {
 		this.hiddenLayer[Params.getHiddenNeuronsQuantity()] = 1.0;
 		this.weightsMatrixInputHidden = new double[Params.getInputNeuronsQuantity() + 1][Params.getHiddenNeuronsQuantity()]; 
         this.weightsMatrixHiddenOutput = new double[Params.getHiddenNeuronsQuantity() + 1][Params.getOutputNeuronsQuantity()];
-        this.deltaw1 = new double[Params.getInputNeuronsQuantity() + 1][Params.getHiddenNeuronsQuantity()];
-        this.deltaw2 = new double[Params.getHiddenNeuronsQuantity() + 1][Params.getOutputNeuronsQuantity()];
         this.sigmaForY = new Double[Params.getHiddenNeuronsQuantity() + 1];
         this.sigmaForZ = new Double[Params.getOutputNeuronsQuantity()];
+        this.deltaw1 = new double[Params.getInputNeuronsQuantity() + 1][Params.getHiddenNeuronsQuantity()];
+        this.deltaw2 = new double[Params.getHiddenNeuronsQuantity() + 1][Params.getOutputNeuronsQuantity()];        
 		
 		this.init();
 	}
@@ -106,6 +121,13 @@ public class NeuralNetwork {
 		
 		System.out.println("\nPesos inicializados\n");
 		
+		// Expected values
+		this.expectedOutput = new Double[fileController.getQuantityOfLinesDataset()][Params.getOutputNeuronsQuantity()];
+		
+		// Initialize the data structure with the dataset files
+		this.initializeTrainingDataset();
+		
+		// Train the specified times
 		this.train(Params.getMaxIterations());
 	}
 	
@@ -114,13 +136,9 @@ public class NeuralNetwork {
 	// Receive the number of times to train
 	private Double train(int times) throws IOException {
 		
+		// Current expected output
 		Double[] eO = new Double[Params.getOutputNeuronsQuantity()];
         Double error = 0.0;
-
-        FileController fileController = new FileController();
-
-        // Read the dataset
-        fileController.readDataset(Params.getTrainingFile());
 
 		System.out.println("\nTreinando...\n");
 		
@@ -128,14 +146,14 @@ public class NeuralNetwork {
 		
 		int currentIteration = 0;
 		
-		System.out.println(fileController.getQuantityOfLinesDataset());
+		//System.out.println(fileController.getQuantityOfLinesDataset());
 		
 		// Trains the specified times
 		while(currentIteration < Params.getMaxIterations()) {
 
 			for (int i = 0; i < fileController.getQuantityOfLinesDataset()-1; i++) {
 
-				this.copyLineReadToLayers(fileController.getDatasetLine(i), eO);
+				//this.copyLineReadToLayers(fileController.getDatasetLine(i), i);
 				
 				// Calls method of feedForward to the given input
 				this.feedForward();
@@ -220,9 +238,10 @@ public class NeuralNetwork {
 		// Calculate the values
 		for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
 			
-			values[i] = (expectedOutput[i] - this.outputLayer[i]) * this.sigmoidalDerivate(this.sigmaForZ[i]);
-			
 			System.out.println(expectedOutput[i]);
+			
+			values[i] = (expectedOutput[i] - this.outputLayer[i]) * this.sigmoidalDerivate(this.sigmaForZ[i]);			
+			
 		}
 		
 		for (int i = 0; i < Params.getHiddenNeuronsQuantity() + 1; i++) { 
@@ -255,6 +274,31 @@ public class NeuralNetwork {
         this.changeWeights();
 	}
 	
+	private Double calculateError() {
+		
+		Double[] eO = new Double[Params.getOutputNeuronsQuantity()];
+		Double err = 0.0;
+		Double totalError = 0.0;
+		
+		for(int i= 0 ; i < fileController.getQuantityOfLinesDataset() ; i++) {
+			
+			//this.copyLineReadToLayers(fileController.getDatasetLine(i), i);
+			
+			this.feedForward();
+			
+			for (int j=0; j < Params.getOutputNeuronsQuantity(); j++) {
+				err += Math.pow((eO[j] - this.outputLayer[j]), 2);
+	        }
+			
+			err /= Params.getOutputNeuronsQuantity();
+			totalError += err;
+		}
+		
+		totalError /= fileController.getQuantityOfLinesDataset();
+		
+		return totalError;
+	}
+	
 	// Recalculate weights
 	private void changeWeights() {
         for (int i = 0; i < Params.getHiddenNeuronsQuantity() + 1; i++) { 
@@ -270,50 +314,90 @@ public class NeuralNetwork {
         }
     }
 	
-	// Copy the line read to input layer and to expected output data structures
-	private void copyLineReadToLayers(String datasetLine, Double[] expectedOutput) {
+	public void test() {
+		
+	}
+	
+	// Get the training dataset
+	private void initializeTrainingDataset() {
 		
 		boolean foudComma = false;
+		boolean isLastNumber = true;
 		int expectedOutputIndex = 0;
 		String[] expectedOutputString;
+		String currentLine;
 		
-		// Put each character of the received string at inputLayerValues[index]
-		for(int i=0 ; i < datasetLine.length() ; i++) {
-			//System.out.println("String quebrada pos[ " + i + "] = " + datasetLine.charAt(i) + "\n");
+		//System.out.println("Linhas no arquivo: " + fileController.getQuantityOfLinesDataset());
+		
+		// For each line in the file
+		for(int i=0 ; i<this.fileController.getQuantityOfLinesDataset() ; i++) {
+			foudComma = false;
+			isLastNumber = true;
+			// Get current line
+			currentLine = this.fileController.getDatasetLine(i);
 			
-			if(datasetLine.charAt(i) == ',') {
-				
-				//System.out.println("Encontrei a virgula na pos " + i + "\n");
-				foudComma = true;
-				
-				expectedOutputString = datasetLine.split(",");
-				
-				//System.out.println(expectedOutputString[0]);
-				//System.out.println(expectedOutputString[1]);
-				
-				continue;
-			}
+			//System.out.println("current line: " + currentLine);
 			
-			if(!foudComma) {
-				// Copy to input layer
-				this.inputLayer[i] = Character.getNumericValue(datasetLine.charAt(i));
-			} else {
-				// Copy to expected output
-				expectedOutput[expectedOutputIndex] = (double) Character.getNumericValue(datasetLine.charAt(i));
-				expectedOutputIndex++;
+			// Handle each character of current line
+			for(int j=0 ; j < currentLine.length() -1 ; j++) {
+				
+				int posVerifyComma = j+1;
+				
+				System.out.println("POS: " + posVerifyComma);
+				
+				if(currentLine.charAt(posVerifyComma) == ',') {
+					
+					//System.out.println("Encontrei a virgula na pos " + i + "\n");
+					foudComma = true;
+					
+					expectedOutputString = currentLine.split(",");
+					
+					// Reset pos
+					expectedOutputIndex = 0;
+					
+					//continue;
+				}
+				
+				if(!foudComma) {
+					// Copy to stored input layer
+					this.storedInputLayer[i][j] = Character.getNumericValue(currentLine.charAt(j));
+					
+					//System.out.println("i:" + i);
+					//System.out.println("j:" + j);
+					System.out.println("if=" + currentLine.charAt(j));					
+				}
+				else {
+					
+					if(isLastNumber) {
+						isLastNumber= false;
+						// Copy to stored input layer
+						this.storedInputLayer[i][j] = Character.getNumericValue(currentLine.charAt(j));
+						
+						//System.out.println("i:" + i);
+						//System.out.println("j:" + j);
+						System.out.println("else=" + currentLine.charAt(j));	
+					}
+					else {
+						// Copy to expected output
+						this.expectedOutput[i][expectedOutputIndex] = (double) Character.getNumericValue(currentLine.charAt(j));
+						expectedOutputIndex++;			
+					}								
+				}			
 			}			
 		}
 		
-		/*for(int i=0 ; i< Params.getInputNeuronsQuantity() ; i++) {
-			System.out.println("Input layer pos[ " + i + "] = " + inputLayer[i]);
-		}*/
+		for (int i = 0; i < fileController.getQuantityOfLinesDataset(); i++) {
+			for(int j=0 ; j< Params.getInputNeuronsQuantity() ; j++) {
+				System.out.println("Stored input layer pos[" + i + "] [" + j + "] = " + this.storedInputLayer[i][j]);
+			}	
+		}
 		
-		/*for(int i=0 ; i< Params.getExpectedOutputSize() ; i++) {
-			System.out.println("Expected output pos[ " + i + "] = " + expectedOutput[i]);
-		}*/
-	}
-
-	public void test() {
+	
+		for(int i=0 ; i< fileController.getQuantityOfLinesDataset(); i++) {
+			for(int j=0 ; j< Params.getOutputNeuronsQuantity()-1 ; j++) {
+				System.out.println("Expected input layer pos[" + i + "] [" + j + "] = " + this.expectedOutput[i][j]);
+			}
+		}
 		
 	}
 	
