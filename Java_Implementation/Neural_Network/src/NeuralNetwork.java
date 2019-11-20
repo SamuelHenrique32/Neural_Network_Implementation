@@ -87,8 +87,8 @@ public class NeuralNetwork {
 		
 		//TODO
 		// Why?
-		this.inputLayer[Params.getInputNeuronsQuantity()] = 1.0;
-		this.hiddenLayer[Params.getHiddenNeuronsQuantity()] = 1.0;
+		this.inputLayer[Params.getInputNeuronsQuantity()] = 1.0;	// Bias
+		this.hiddenLayer[Params.getHiddenNeuronsQuantity()] = 1.0;	// Bias
 		this.weightsMatrixInputHidden = new double[Params.getInputNeuronsQuantity() + 1][Params.getHiddenNeuronsQuantity()]; 
         this.weightsMatrixHiddenOutput = new double[Params.getHiddenNeuronsQuantity() + 1][Params.getOutputNeuronsQuantity()];
         this.sigmaForY = new Double[Params.getHiddenNeuronsQuantity() + 1];
@@ -151,7 +151,7 @@ public class NeuralNetwork {
 		// Trains the specified times
 		while(currentIteration < Params.getMaxIterations()) {
 
-			for (int i = 0; i < fileController.getQuantityOfLinesDataset()-1; i++) {
+			for (int i = 0; i < fileController.getQuantityOfLinesDataset(); i++) {
 
 				//this.copyLineReadToLayers(fileController.getDatasetLine(i), i);
 				
@@ -281,7 +281,7 @@ public class NeuralNetwork {
 		Double err = 0.0;
 		Double totalError = 0.0;
 		
-		for(int i= 0 ; i < fileController.getQuantityOfLinesDataset() ; i++) {
+		for(int i=0 ; i < Params.getInputNeuronsQuantity() ; i++) {
 			
 			//this.copyLineReadToLayers(fileController.getDatasetLine(i), i);
 			
