@@ -3,6 +3,8 @@ import java.util.Scanner;
 
 public class Main {
 	
+	private static boolean testAvailable = false;
+	
 	private static NeuralNetwork neuralNetwork;
 	
 	public static void showMenuOptions() {
@@ -23,22 +25,28 @@ public class Main {
 			
 		}
 		
-		switch (option) {
+		switch(option){
 		
 			case 1:
 				// Instanciate the neural network
-				neuralNetwork = new NeuralNetwork();		
+				neuralNetwork = new NeuralNetwork();	
+				testAvailable = true;
 			break;
 	
 			case 2:
-				neuralNetwork.test();
+				if(testAvailable) {
+					neuralNetwork.test();	
+				}
+				else {
+					System.out.println("\nA rede precisa treinar primeiro!\n\n");
+				}
+				
 			break;
 			
 			default:
-		
+				System.out.println("Opcao invalida!\n");
 			break;
-		}
-		
+		}		
 	}
 	
 	public static void menuHandler() throws IOException {
@@ -54,6 +62,9 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 		
-		menuHandler();
+		// Main loop
+		while(true) {
+			menuHandler();
+		}			
 	}
 }

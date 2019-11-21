@@ -175,6 +175,8 @@ public class NeuralNetwork {
 			
 			currentIteration++;
 		}
+		
+		System.out.println("\n A rede treinou " + Params.getMaxIterations() + " vezes!\n\n\n");
 
 		return error;
 	}
@@ -207,8 +209,8 @@ public class NeuralNetwork {
                     else {
                     	// Multiply the values
                         this.sigmaForY[j] = this.sigmaForY[j] + this.inputLayer[i] * this.weightsMatrixInputHidden[i][j];	
-                    }
                 	
+                    }
                 } catch (Exception e) {
                 	// If an error has ocurred
                     System.out.println("erro" + e);
@@ -299,7 +301,7 @@ public class NeuralNetwork {
 			
 			//this.copyLineReadToLayers(fileController.getDatasetLine(i), i);
 			
-			this.feedForward(true);
+			this.feedForward(false);
 			
 			for (int j=0; j < Params.getOutputNeuronsQuantity(); j++) {
 				//err += Math.pow((eO[j] - this.outputLayer[j]), 2);
