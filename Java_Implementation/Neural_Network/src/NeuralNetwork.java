@@ -281,7 +281,7 @@ public class NeuralNetwork {
 		Double err = 0.0;
 		Double totalError = 0.0;
 		
-		for(int i=0 ; i < Params.getInputNeuronsQuantity() ; i++) {
+		for(int i=0 ; i < fileController.getQuantityOfLinesDataset() ; i++) {
 			
 			//this.copyLineReadToLayers(fileController.getDatasetLine(i), i);
 			
