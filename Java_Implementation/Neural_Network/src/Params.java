@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 // Application parameters
 public class Params {
 	
@@ -75,4 +77,12 @@ public class Params {
 	public static int getExpectedOutputSize() {
 		return expectedOutputSize;
 	}
+	
+	//--------------------------------------------------------------------------------------------------------------------
+    // Menu parameters
+	
+	// Menu options
+	public static int[] menuOptions = {1,2};
+	//public static ArrayList<Integer> menuOptions = new ArrayList<Integer>();
+	
 }

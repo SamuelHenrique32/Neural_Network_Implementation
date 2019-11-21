@@ -11,6 +11,9 @@ public class NeuralNetwork {
 	// Weights matrix hidden -> output
 	private double[][] weightsMatrixHiddenOutput;
 	
+	// Stored input test layer
+	private double[][] storedInputTestLayer;
+	
 	// Stored input layer
 	private double[][] storedInputLayer;
 	
@@ -66,6 +69,11 @@ public class NeuralNetwork {
 		
 		// Stored input layer
 		this.storedInputLayer = new double[fileController.getQuantityOfLinesDataset()][Params.getInputNeuronsQuantity()];
+		
+		// TODO Adequate with test input file
+		// Stored input test layer
+		this.storedInputTestLayer = new double[fileController.getQuantityOfLinesDataset()][Params.getInputNeuronsQuantity()];
+		this.storedInputTestLayer[0] = new double[] {0,1,1,1,1,0,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,1};
 		
 		// Current input layer
 		this.inputLayer = new double[Params.getInputNeuronsQuantity()+1];
@@ -156,7 +164,7 @@ public class NeuralNetwork {
 				//this.copyLineReadToLayers(fileController.getDatasetLine(i), i);
 				
 				// Calls method of feedForward to the given input
-				this.feedForward();
+				this.feedForward(false);
 				
 				// Calls method with expected output
 				//this.backPropagation(eO);
@@ -172,16 +180,16 @@ public class NeuralNetwork {
 	}
 	
 	// feedForward calculates the output of hidden layer and output layer
-	private void feedForward() {
+	private void feedForward(boolean isTest) {
 		// Hidden layer
-        this.setOutputHiddenLayer();
+        this.setOutputHiddenLayer(isTest);
         
         // Output layer
         this.setOutputFinalLayer();
     }
 	
 	// Calculates the output of hidden layer
-	private void setOutputHiddenLayer() {
+	private void setOutputHiddenLayer(boolean isTest) {
 		
 		// Set zero values is array
 		for (int i = 0; i < Params.getHiddenNeuronsQuantity(); i++) {
@@ -193,8 +201,14 @@ public class NeuralNetwork {
             for (int i = 0; i < Params.getInputNeuronsQuantity() + 1; i++) {
             	// Try to multiply the values
                 try {
-                	// Multiply the values
-                    this.sigmaForY[j] = this.sigmaForY[j] + this.inputLayer[i] * this.weightsMatrixInputHidden[i][j];
+                    if(isTest) {
+                    	this.sigmaForY[j] = this.sigmaForY[j] + this.storedInputLayer[0][i] * this.weightsMatrixInputHidden[i][j];
+                    }
+                    else {
+                    	// Multiply the values
+                        this.sigmaForY[j] = this.sigmaForY[j] + this.inputLayer[i] * this.weightsMatrixInputHidden[i][j];	
+                    }
+                	
                 } catch (Exception e) {
                 	// If an error has ocurred
                     System.out.println("erro" + e);
@@ -285,7 +299,7 @@ public class NeuralNetwork {
 			
 			//this.copyLineReadToLayers(fileController.getDatasetLine(i), i);
 			
-			this.feedForward();
+			this.feedForward(true);
 			
 			for (int j=0; j < Params.getOutputNeuronsQuantity(); j++) {
 				//err += Math.pow((eO[j] - this.outputLayer[j]), 2);
@@ -318,6 +332,8 @@ public class NeuralNetwork {
 	
 	public void test() {
 		
+		
+		this.feedForward(true);
 	}
 	
 	// Get the training dataset
