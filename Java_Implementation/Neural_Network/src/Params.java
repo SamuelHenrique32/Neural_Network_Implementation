@@ -44,11 +44,11 @@ public class Params {
 	
 	private static int inputNeuronsQuantity = 48;
 	
-	private static int hiddenNeuronsQuantity = 42;
+	private static int hiddenNeuronsQuantity = 20;
 	
 	private static int outputNeuronsQuantity = 36;
 	
-	private static double learningRate = 0.6;
+	private static double learningRate = 0.7;
 	
 	private static int maxIterations = 2000;
 	

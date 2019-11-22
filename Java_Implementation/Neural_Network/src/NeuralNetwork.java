@@ -28,6 +28,8 @@ public class NeuralNetwork {
     
     // File controller
  	private FileController fileController;
+ 	
+ 	private boolean isTesting;
 
     // Constructor method    
     public NeuralNetwork() throws IOException {
@@ -41,6 +43,8 @@ public class NeuralNetwork {
         
         // File controller
      	this.fileController = new FileController();
+     	
+     	this.isTesting = false;
 
         this.inputLayer = new Double[Params.getInputNeuronsQuantity() + 1];
         this.hiddenLayer = new Double[Params.getHiddenNeuronsQuantity() + 1];
@@ -51,6 +55,11 @@ public class NeuralNetwork {
 
         this.sigmaForHiddenLayer = new Double[Params.getHiddenNeuronsQuantity() + 1];
         this.sigmaForOutputLayer = new Double[Params.getOutputNeuronsQuantity()];
+        
+        // Stored input layer training
+     	this.storedInputLayerTraining = new Double[fileController.getQuantityOfLinesDataset()][Params.getInputNeuronsQuantity()];
+     	// Expected values
+     	this.expectedOutput = new Double[fileController.getQuantityOfLinesDataset()][Params.getOutputNeuronsQuantity()];
 
         this.weightsMatrixInputHidden = new Double[Params.getInputNeuronsQuantity() + 1][Params.getHiddenNeuronsQuantity()]; 
         this.weightsMatrixHiddenOutput = new Double[Params.getHiddenNeuronsQuantity() + 1][Params.getOutputNeuronsQuantity()];
@@ -91,14 +100,17 @@ public class NeuralNetwork {
                     this.backPropagation(eO);
                 }
                 err = this.caclERR();
-                System.out.println("Taxa de erro: " + err);
+                System.out.println("Taxa de erro na iteracao " + this.currentIteration + ": " + err);
                 times--;
                 erro = err;
             } 
         } else {
             System.out.println("Sem dados para treinar");
         }
-        return erro;
+        
+        System.out.println("\nA rede treinou " + Params.getMaxIterations() + " vezes!\n\n");
+        
+        return erro;        
     }
 
     private Double caclERR() {
@@ -121,6 +133,9 @@ public class NeuralNetwork {
     }
 
     public void test(Double[] input) {
+    	
+    	this.isTesting = true;
+    	
         System.arraycopy(input, 0, this.inputLayer, 0, Params.getInputNeuronsQuantity());
         this.feedForward();
     }
@@ -165,6 +180,15 @@ public class NeuralNetwork {
         
         for (int k = 0; k < Params.getOutputNeuronsQuantity(); k++) {
         	this.outputLayer[k] = this.sigmoid(this.sigmaForOutputLayer[k]);
+        }
+        
+        if(this.isTesting) {
+        	
+        	for (int k = 0; k < Params.getOutputNeuronsQuantity(); k++) {
+            	System.out.println(this.outputLayer[k] + "\n");
+            }
+        	
+        	this.isTesting = false;
         }
     }    
 
@@ -285,7 +309,7 @@ public class NeuralNetwork {
  				
  				if(!foudComma) {
  					// Copy to stored input layer
- 					this.storedInputLayer[i][j] = Character.getNumericValue(currentLine.charAt(j));
+ 					this.storedInputLayerTraining[i][j] = (double) Character.getNumericValue(currentLine.charAt(j));
  					
  					//System.out.println("i:" + i);
  					//System.out.println("j:" + j);
@@ -296,7 +320,7 @@ public class NeuralNetwork {
  					if(isLastNumber) {
  						isLastNumber= false;
  						// Copy to stored input layer
- 						this.storedInputLayer[i][j] = Character.getNumericValue(currentLine.charAt(j));
+ 						this.storedInputLayerTraining[i][j] = (double) Character.getNumericValue(currentLine.charAt(j));
  						
  						//System.out.println("i:" + i);
  						//System.out.println("j:" + j);

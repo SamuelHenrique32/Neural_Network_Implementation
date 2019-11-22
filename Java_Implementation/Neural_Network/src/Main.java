@@ -34,7 +34,12 @@ public class Main {
 	
 			case 2:
 				if(testAvailable) {
-					//neuralNetwork.test();	
+					String[] testInput = {"0","1","1","1","1","0","1","0","0","0","0","1","1","0","0","0","0","1","1","0","0","0","0","1","1","1","1","1","1","1","1","0","0","0","0","1","1","0","0","0","0","1","1","0","0","0","0","1"};
+					Double[] testInputDouble = new Double[Params.getInputNeuronsQuantity()];
+					for(int i=0 ; i<testInput.length ; i++) {
+						testInputDouble[i] = Double.parseDouble(testInput[i]);
+					}
+					neuralNetwork.test(testInputDouble);	
 				}
 				else {
 					System.out.println("\nA rede precisa treinar primeiro!\n\n");
