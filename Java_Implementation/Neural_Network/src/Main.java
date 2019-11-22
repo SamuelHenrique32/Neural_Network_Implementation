@@ -27,15 +27,14 @@ public class Main {
 		
 		switch(option){
 		
-			case 1:
-				// Instanciate the neural network
-				neuralNetwork = new NeuralNetwork();	
+			case 1:				
+				neuralNetwork.train(Params.getMaxIterations());	
 				testAvailable = true;
 			break;
 	
 			case 2:
 				if(testAvailable) {
-					neuralNetwork.test();	
+					//neuralNetwork.test();	
 				}
 				else {
 					System.out.println("\nA rede precisa treinar primeiro!\n\n");
@@ -61,6 +60,9 @@ public class Main {
 	}
 
 	public static void main(String[] args) throws IOException {
+		
+		// Instantiate the neural network
+		neuralNetwork = new NeuralNetwork();
 		
 		// Main loop
 		while(true) {
