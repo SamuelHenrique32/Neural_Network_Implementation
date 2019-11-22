@@ -7,7 +7,7 @@ public class Params {
 	// Files parameters
 
 	// Directory of files used
-	private static String filesDirectory = new String("/home/samuel/Desktop/Neural_Network_Implementation/Java_Implementation/Neural_Network/files/");
+	private static String filesDirectory = new String("/home/samuel/Desktop/test/Neural_Network_Implementation/Java_Implementation/Neural_Network/files/");
 	//private static String filesDirectory = new String("C:\\Users\\Samuel\\Desktop\\Neural_Network_Implementation\\Java_Implementation\\Neural_Network\\files\\");
 	
 	// File used to training

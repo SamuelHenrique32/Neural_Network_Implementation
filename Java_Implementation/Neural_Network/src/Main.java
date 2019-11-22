@@ -14,6 +14,7 @@ public class Main {
 		System.out.println("Opcoes:\n");
 		System.out.println("1- Treinar Rede Neural");
 		System.out.println("2- Testar Rede Neural");
+		System.out.print("Opcao escolhida: ");
 	}
 	
 	public static void handleOption(int option) throws IOException {
