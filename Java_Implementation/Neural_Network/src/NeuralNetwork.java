@@ -23,7 +23,7 @@ public class NeuralNetwork {
 
     // Stored data
     private Double[][] storedInputLayerTraining;
-    private Double[][] storedExpectedOutput;
+    private Double[][] storedExpectedOutputTraining;
 
     private Integer currentIteration;
     
@@ -58,9 +58,9 @@ public class NeuralNetwork {
         this.sigmaForOutputLayer = new Double[Params.getOutputNeuronsQuantity()];
         
         // Stored input layer training
-     	this.storedInputLayerTraining = new Double[fileController.getQuantityOfLinesDataset()][Params.getInputNeuronsQuantity()];
+     	this.storedInputLayerTraining = new Double[fileController.getQuantityOfLinesTrainingDataset()][Params.getInputNeuronsQuantity()];
      	// Stored expected values
-     	this.storedExpectedOutput = new Double[fileController.getQuantityOfLinesDataset()][Params.getOutputNeuronsQuantity()];
+     	this.storedExpectedOutputTraining = new Double[fileController.getQuantityOfLinesTrainingDataset()][Params.getOutputNeuronsQuantity()];
 
         this.weightsMatrixInputHidden = new Double[Params.getInputNeuronsQuantity() + 1][Params.getHiddenNeuronsQuantity()]; 
         this.weightsMatrixHiddenOutput = new Double[Params.getHiddenNeuronsQuantity() + 1][Params.getOutputNeuronsQuantity()];
@@ -82,8 +82,11 @@ public class NeuralNetwork {
             }
         }
         
-        // Reads dataset
-        fileController.readDataset(Params.getTrainingFile());
+        // Reads training dataset
+        fileController.readDataset(Params.getTrainingFile(), 1);
+        
+        // Reads test dataset
+        fileController.readDataset(Params.getTestFile(), 2);
         
         // Initialize the data structure with the dataset files
      	this.initializeTrainingDataset();
@@ -101,7 +104,7 @@ public class NeuralNetwork {
             for (int i = 0; i < this.storedInputLayerTraining.length; i++) {
             	// Copy data
                 System.arraycopy(this.storedInputLayerTraining[i], 0, inputLayer, 0, this.storedInputLayerTraining[i].length);
-                System.arraycopy(this.storedExpectedOutput[i], 0, eO, 0, this.storedExpectedOutput[i].length);
+                System.arraycopy(this.storedExpectedOutputTraining[i], 0, eO, 0, this.storedExpectedOutputTraining[i].length);
 
                 this.feedForward();
                 this.backPropagation(eO);
@@ -124,7 +127,7 @@ public class NeuralNetwork {
         for (int i = 0; i < this.storedInputLayerTraining.length; i++) {
         	
             System.arraycopy(this.storedInputLayerTraining[i], 0, inputLayer, 0, this.storedInputLayerTraining[i].length);
-            System.arraycopy(this.storedExpectedOutput[i], 0, eO, 0, this.storedExpectedOutput[i].length);
+            System.arraycopy(this.storedExpectedOutputTraining[i], 0, eO, 0, this.storedExpectedOutputTraining[i].length);
             
             this.feedForward();
             
@@ -290,11 +293,11 @@ public class NeuralNetwork {
  		//System.out.println("Linhas no arquivo: " + fileController.getQuantityOfLinesDataset());
  		
  		// For each line in the file
- 		for(int i=0 ; i<this.fileController.getQuantityOfLinesDataset() ; i++) {
+ 		for(int i=0 ; i<this.fileController.getQuantityOfLinesTrainingDataset() ; i++) {
  			foudComma = false;
  			isLastNumber = true;
  			// Get current line
- 			currentLine = this.fileController.getDatasetLine(i);
+ 			currentLine = this.fileController.getTrainingDatasetLine(i);
  			
  			// Handle each character of current line
  			for(int j=0 ; j < currentLine.length() -1; j++) {
@@ -344,7 +347,7 @@ public class NeuralNetwork {
  					else {
  						
  						// Copy to expected output
- 						this.storedExpectedOutput[i][expectedOutputIndex] = (double) Character.getNumericValue(expectedOutputString.charAt(expectedOutputIndex));
+ 						this.storedExpectedOutputTraining[i][expectedOutputIndex] = (double) Character.getNumericValue(expectedOutputString.charAt(expectedOutputIndex));
  						
  						//System.out.println(expectedOutputString);
  						

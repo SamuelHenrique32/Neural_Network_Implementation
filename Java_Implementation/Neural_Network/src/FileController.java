@@ -7,29 +7,47 @@ import java.nio.file.Files;
 // Read and write data in the files
 public class FileController {
 	
-	private String fullFileName;
-	private int quantityOfLinesDataset;
-	// Store all lines of dataset
-	private String[] dataset;
+	private String directoryName;
+		
+	private int quantityOfLinesTrainingDataset;
+	private int quantityOfLinesTestDataset;
+	
+	// Store all lines of training dataset
+	private String[] trainingDataset;
+	
+	// Store all lines of test dataset
+	private String[] testDataset;
 	
 	// Constructor
 	public FileController() throws IOException {
 		
 		// Full filename
-		this.fullFileName = Params.getFilesDirectory();
+		this.directoryName = Params.getFilesDirectory();
 		
-		// Quantity of lines in dataset file
-		this.quantityOfLinesDataset = getDatasetLinesQuantity();
+		// Quantity of lines in training dataset file
+		this.quantityOfLinesTrainingDataset = getTrainingDatasetLinesQuantity();
 		
-		// Store all lines of dataset
-		this.dataset = new String[this.quantityOfLinesDataset];
+		// Quantity of lines in test dataset file
+		this.quantityOfLinesTestDataset = getTestDatasetLinesQuantity();
+		
+		// Store all lines of training dataset
+		this.trainingDataset = new String[this.quantityOfLinesTrainingDataset];
+		
+		// Store all lines of test dataset
+		this.testDataset = new String[this.quantityOfLinesTestDataset];
 	}
 	
-	public int getQuantityOfLinesDataset() {
-		return quantityOfLinesDataset;
+	public int getQuantityOfLinesTrainingDataset() {
+		return quantityOfLinesTrainingDataset;
 	}
 	
-	public void readDataset(String fileName) throws IOException{
+	public int getQuantityOfLinesTestDataset() {
+		return quantityOfLinesTestDataset;
+	}
+	
+	// File type 1 = training dataset
+	// File type 2 = test dataset 
+	public void readDataset(String fileName, int fileType) throws IOException{
 		
 		// Current line
 		int nroCurrentLine = 0;
@@ -38,7 +56,7 @@ public class FileController {
 		try {
 			
 			// Open file to read
-			BufferedReader buffRead = new BufferedReader(new FileReader(fullFileName.concat(fileName)));
+			BufferedReader buffRead = new BufferedReader(new FileReader(directoryName.concat(fileName)));
 			
 			// For each line
 			while(buffRead.ready()) {
@@ -48,11 +66,18 @@ public class FileController {
 				
 				//System.out.println("Li: " + currentLine);
 				
-				// Store the line
-				this.dataset[nroCurrentLine] = currentLine;
+				// Training dataset
+				if(fileType == 1) {
+					// Store the line
+					this.trainingDataset[nroCurrentLine] = currentLine;
+				// Test dataset
+				} else if(fileType == 2) {
+					this.testDataset[nroCurrentLine] = currentLine;
+				} else {
+					System.out.println("Tipo de arquivo invalido");
+				}
 				
-				nroCurrentLine++;
-				
+				nroCurrentLine++;				
 			}
 			
 			buffRead.close();
@@ -61,16 +86,14 @@ public class FileController {
 			
 			e.printStackTrace();
 		}
-		
-		//System.out.println(this.quantityOfLinesDataset);
 	}
 	
-	// Get the quantity of lines in the dataset file
-	private int getDatasetLinesQuantity() throws IOException {
+	// Get the quantity of lines in the training dataset file
+	private int getTrainingDatasetLinesQuantity() throws IOException {
 		
 		int linesQuantity = 0;
 		
-		BufferedReader buffRead = new BufferedReader(new FileReader(fullFileName.concat(Params.getTrainingFile())));
+		BufferedReader buffRead = new BufferedReader(new FileReader(directoryName.concat(Params.getTrainingFile())));
 		
 		try {
 			while(buffRead.readLine() != null)
@@ -84,11 +107,39 @@ public class FileController {
 		return linesQuantity;
 	}
 	
-	// Returns a specific line of dataset
-	public String getDatasetLine(int lineNumber) {
+	// Get the quantity of lines in the test dataset file
+	private int getTestDatasetLinesQuantity() throws IOException {
+			
+			int linesQuantity = 0;
+			
+			BufferedReader buffRead = new BufferedReader(new FileReader(directoryName.concat(Params.getTestFile())));
+			
+			try {
+				while(buffRead.readLine() != null)
+					linesQuantity++;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			buffRead.close();
+			
+			return linesQuantity;
+	}
+	
+	// Returns a specific line of training dataset
+	public String getTrainingDatasetLine(int lineNumber) {
 		
-		if(lineNumber >=0 && lineNumber<=quantityOfLinesDataset)
-			return this.dataset[lineNumber];
+		if(lineNumber >=0 && lineNumber<=quantityOfLinesTrainingDataset)
+			return this.trainingDataset[lineNumber];
+		else
+			return null;
+	}
+	
+	// Returns a specific line of test dataset
+	public String getTestDatasetLine(int lineNumber) {
+			
+		if(lineNumber >=0 && lineNumber<=quantityOfLinesTestDataset)
+			return this.testDataset[lineNumber];
 		else
 			return null;
 	}

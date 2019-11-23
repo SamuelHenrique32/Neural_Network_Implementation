@@ -11,10 +11,10 @@ public class Params {
 	//private static String filesDirectory = new String("C:\\Users\\Samuel\\Desktop\\Neural_Network_Implementation\\Java_Implementation\\Neural_Network\\files\\");
 	
 	// File used to training
-	private static String trainingFile = new String("datasets.txt");
+	private static String trainingFile = new String("training_dataset.txt");
 	
 	// File used to tests
-    private static String testFile = new String("test.txt");
+    private static String testFile = new String("test_dataset.txt");
     
     // File used to output
     private static String outputFile = new String("output.txt");
