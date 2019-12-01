@@ -31,6 +31,9 @@ public class NeuralNetwork {
  	private FileController fileController;
  	
  	private boolean isTesting;
+ 	
+ 	// Store the index of the neuron with the biggest output value
+ 	private int biggestNeuronValueIndex;
 
     // Constructor method    
     public NeuralNetwork() throws IOException {
@@ -67,6 +70,8 @@ public class NeuralNetwork {
         
         this.difWeightsInputHidden = new Double[Params.getInputNeuronsQuantity() + 1][Params.getHiddenNeuronsQuantity()];
         this.difWeightsHiddenOutput = new Double[Params.getHiddenNeuronsQuantity() + 1][Params.getOutputNeuronsQuantity()];
+        
+        this.biggestNeuronValueIndex = 0;
 
         // Initialize weights matrix input -> hidden
         for (int i = 0; i < Params.getInputNeuronsQuantity() + 1; i++) {
@@ -91,6 +96,11 @@ public class NeuralNetwork {
         // Initialize the data structure with the dataset files
      	this.initializeTrainingDataset();
     }
+	
+	public int getBiggestNeuronValueIndex() {
+
+		return this.biggestNeuronValueIndex;
+	}
 
     public Double train(int times) {
     	
@@ -183,6 +193,8 @@ public class NeuralNetwork {
 
     private void setOutputFinalLayer() {
     	
+    	Double biggestNeuronValue = 0.0;
+    	
         for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
             this.sigmaForOutputLayer[i] = 0.0;
         }
@@ -202,6 +214,15 @@ public class NeuralNetwork {
         	System.out.println("\nValores neuronios de saida:\n");
         	
         	for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
+        		// Verify the output value
+        		if(this.outputLayer[i] > biggestNeuronValue) {
+        			
+        			// Store value
+        			biggestNeuronValue = this.outputLayer[i];
+        			
+        			// Store index
+        			this.biggestNeuronValueIndex = i;
+        		}
             	System.out.println("Neuronio " + i + ": " + this.outputLayer[i] + "\n");
             }
         	

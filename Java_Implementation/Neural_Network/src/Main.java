@@ -36,12 +36,15 @@ public class Main {
 	
 			case 2:
 				if(testAvailable) {
-					String[] testInput = {"0","1","1","1","1","0","1","0","0","0","0","1","1","0","0","0","0","1","1","0","0","0","0","1","1","1","1","1","1","1","1","0","0","0","0","1","1","0","0","0","0","1","1","0","0","0","0","1"};
+					//String[] testInput = {"0","0","1","1","1","0","0","0","1","0","1","0","0","0","1","0","1","0","0","0","1","0","1","0","0","0","1","1","1","0","0","0","0","0","1","0","0","0","0","0","1","0","0","0","0","0","1","0"};
+					String[] testInput = {"0","1","1","1","1","0","0","1","0","0","1","0","0","1","0","0","1","0","0","1","0","0","0","0","0","1","0","0","0","0","0","1","0","0","0","0","0","1","0","0","0","0","0","1","0","0","0","0"};
 					Double[] testInputDouble = new Double[Params.getInputNeuronsQuantity()];
 					for(int i=0 ; i<testInput.length ; i++) {
 						testInputDouble[i] = Double.parseDouble(testInput[i]);
 					}
-					neuralNetwork.test(testInputDouble);	
+					neuralNetwork.test(testInputDouble);
+
+					System.out.println("\nNeuronio de saida com maior valor: " + neuralNetwork.getBiggestNeuronValueIndex() + "\n");
 				}
 				else {
 					System.out.println("\nA rede precisa treinar primeiro!\n\n");
