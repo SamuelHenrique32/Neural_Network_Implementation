@@ -3,11 +3,19 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import serial.Deserializer;
+import serial.Serializer;
 
 // Read and write data in the files
 public class FileController {
 	
 	private String directoryName;
+	
+	// Weights matrix serializer
+	private Serializer serializer;
+	
+	// Weights matrix deserializer
+	private Deserializer deserializer;
 		
 	private int quantityOfLinesTrainingDataset;
 	private int quantityOfLinesTestDataset;
@@ -35,6 +43,10 @@ public class FileController {
 		
 		// Store all lines of test dataset
 		this.testDataset = new String[this.quantityOfLinesTestDataset];
+		
+		serializer = new Serializer();
+		
+		deserializer = new Deserializer();
 	}
 	
 	public int getQuantityOfLinesTrainingDataset() {
@@ -142,5 +154,70 @@ public class FileController {
 			return this.testDataset[lineNumber];
 		else
 			return null;
+	}
+	
+	public boolean serialize(int type, Double[][] matrix){
+		
+		try {
+			
+			// WeightsMatrixInputHidden
+			if(type == 1) {
+			
+				serializer.serialize(directoryName + "/weightsMatrixInputHidden.ser", matrix);	
+				
+			// WeightsMatrixHiddenOutput	
+			} else if(type == 2) {
+				
+				serializer.serialize(directoryName + "/weightsMatrixHiddenOutput.ser", matrix);
+				
+			} else {
+				
+				System.out.println("Invalid file type\n");
+			}			
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			
+			return false;
+		}
+		
+		return true;		
+	}
+	
+	public Double[][] deserialize(int type){
+		
+		try {
+			
+			// WeightsMatrixInputHidden
+			if(type == 1) {
+			
+				Double[][] weightsMatrix = new Double[Params.getInputNeuronsQuantity() + 1][Params.getHiddenNeuronsQuantity()];
+				
+				weightsMatrix = (Double[][]) deserializer.deserializar(directoryName + "/weightsMatrixInputHidden.ser");
+				
+				return weightsMatrix;
+				
+			// WeightsMatrixHiddenOutput	
+			} else if(type == 2) {
+				
+				Double[][] weightsMatrix = new Double[Params.getHiddenNeuronsQuantity() + 1][Params.getOutputNeuronsQuantity()];
+				
+				weightsMatrix = (Double[][]) deserializer.deserializar(directoryName + "/weightsMatrixHiddenOutput.ser");
+				
+				return weightsMatrix;
+				
+			} else {
+				
+				System.out.println("Invalid file type\n");
+			}			
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			
+		}
+		
+		return null;		
 	}
 }

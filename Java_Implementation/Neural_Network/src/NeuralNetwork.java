@@ -115,6 +115,10 @@ public class NeuralNetwork {
         } 
         System.out.println("\nA rede treinou " + this.currentIteration + " vezes!\n\n");
         
+        // Serialize
+        fileController.serialize(1, this.weightsMatrixInputHidden);
+        fileController.serialize(2, this.weightsMatrixHiddenOutput);
+        
         return error;        
     }
 
@@ -380,4 +384,11 @@ public class NeuralNetwork {
  		
  		System.out.println("Terminou\n\n");*/
  	}
-}
+ 	
+ 	public void loadWeights() {
+ 		
+ 		this.weightsMatrixInputHidden = fileController.deserialize(1);
+ 		
+ 		this.weightsMatrixHiddenOutput = fileController.deserialize(2);
+ 	}
+ }
