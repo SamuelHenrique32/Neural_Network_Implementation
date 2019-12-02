@@ -155,11 +155,29 @@ public class NeuralNetwork {
         return finalError;
     }
 
-    public void test(Double[] input) {
+    public void test() throws IOException {
     	
     	this.isTesting = true;
     	
-        System.arraycopy(input, 0, this.inputLayer, 0, Params.getInputNeuronsQuantity());
+    	Double[] testInputDouble = new Double[Params.getInputNeuronsQuantity()];
+    	
+		// For each line in test dataset    	
+    	for(int i=0 ; i<fileController.getTestDatasetLinesQuantity() ; i++) {
+    	
+    		String testInput = fileController.getTestDatasetLine(i);
+    		
+    		// For each input neuron
+    		for(int j=0 ; j<Params.getInputNeuronsQuantity() ; j++) {
+    			
+    			System.out.println(testInput);
+    			
+    			testInputDouble[j] = (double) (testInput.charAt(j));
+    			
+    			//System.out.println(testInputDouble[j]);
+    		}
+    		
+    		System.arraycopy(testInputDouble, 0, this.inputLayer, 0, Params.getInputNeuronsQuantity());
+    	}        
         
         this.feedForward();
     }
@@ -325,7 +343,8 @@ public class NeuralNetwork {
  			currentLine = this.fileController.getTrainingDatasetLine(i);
  			
  			// Handle each character of current line
- 			for(int j=0 ; j < currentLine.length() -1; j++) {
+ 			// Don't analize the last character
+ 			for(int j=0 ; j < currentLine.length() - 3; j++) {
  				
  				int posVerifyComma = j+1;
  				
@@ -358,9 +377,7 @@ public class NeuralNetwork {
  					//System.out.println("j:" + j);
  					//System.out.println("if=" + currentLine.charAt(j));					
  				}
- 				else {
- 					
- 					if(isLastNumber) {
+ 				else if(isLastNumber) {
  						isLastNumber= false;
  						// Copy to stored input layer
  						this.storedInputLayerTraining[i][j] = (double) Character.getNumericValue(currentLine.charAt(j));
@@ -368,8 +385,8 @@ public class NeuralNetwork {
  						//System.out.println("i:" + i);
  						//System.out.println("j:" + j);
  						//System.out.println("else=" + currentLine.charAt(j));	
- 					}
- 					else {
+ 				}
+ 				else {
  						
  						// Copy to expected output
  						this.storedExpectedOutputTraining[i][expectedOutputIndex] = (double) Character.getNumericValue(expectedOutputString.charAt(expectedOutputIndex));
@@ -380,8 +397,7 @@ public class NeuralNetwork {
  						//System.out.println("Index: " + expectedOutputIndex);
  						
  						expectedOutputIndex++;						
- 					}								
- 				}			
+ 				}								
  			}			
  		}
  		

@@ -120,7 +120,7 @@ public class FileController {
 	}
 	
 	// Get the quantity of lines in the test dataset file
-	private int getTestDatasetLinesQuantity() throws IOException {
+	public int getTestDatasetLinesQuantity() throws IOException {
 			
 			int linesQuantity = 0;
 			
