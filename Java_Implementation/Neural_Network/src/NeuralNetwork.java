@@ -31,6 +31,9 @@ public class NeuralNetwork {
  	private FileController fileController;
  	
  	private boolean isTesting;
+ 	
+ 	// Store the index of the neuron with the biggest output value
+ 	private int biggestNeuronValueIndex;
 
     // Constructor method    
     public NeuralNetwork() throws IOException {
@@ -67,6 +70,8 @@ public class NeuralNetwork {
         
         this.difWeightsInputHidden = new Double[Params.getInputNeuronsQuantity() + 1][Params.getHiddenNeuronsQuantity()];
         this.difWeightsHiddenOutput = new Double[Params.getHiddenNeuronsQuantity() + 1][Params.getOutputNeuronsQuantity()];
+        
+        this.biggestNeuronValueIndex = 0;
 
         // Initialize weights matrix input -> hidden
         for (int i = 0; i < Params.getInputNeuronsQuantity() + 1; i++) {
@@ -91,6 +96,11 @@ public class NeuralNetwork {
         // Initialize the data structure with the dataset files
      	this.initializeTrainingDataset();
     }
+	
+	public int getBiggestNeuronValueIndex() {
+
+		return this.biggestNeuronValueIndex;
+	}
 
     public Double train(int times) {
     	
@@ -114,6 +124,10 @@ public class NeuralNetwork {
             this.currentIteration++;
         } 
         System.out.println("\nA rede treinou " + this.currentIteration + " vezes!\n\n");
+        
+        // Serialize
+        fileController.serialize(1, this.weightsMatrixInputHidden);
+        fileController.serialize(2, this.weightsMatrixHiddenOutput);
         
         return error;        
     }
@@ -141,11 +155,29 @@ public class NeuralNetwork {
         return finalError;
     }
 
-    public void test(Double[] input) {
+    public void test() throws IOException {
     	
     	this.isTesting = true;
     	
-        System.arraycopy(input, 0, this.inputLayer, 0, Params.getInputNeuronsQuantity());
+    	Double[] testInputDouble = new Double[Params.getInputNeuronsQuantity()];
+    	
+		// For each line in test dataset    	
+    	for(int i=0 ; i<fileController.getTestDatasetLinesQuantity() ; i++) {
+    	
+    		String testInput = fileController.getTestDatasetLine(i);
+    		
+    		// For each input neuron
+    		for(int j=0 ; j<Params.getInputNeuronsQuantity() ; j++) {
+    			
+    			System.out.println(testInput);
+    			
+    			testInputDouble[j] = (double) (testInput.charAt(j));
+    			
+    			//System.out.println(testInputDouble[j]);
+    		}
+    		
+    		System.arraycopy(testInputDouble, 0, this.inputLayer, 0, Params.getInputNeuronsQuantity());
+    	}        
         
         this.feedForward();
     }
@@ -179,6 +211,8 @@ public class NeuralNetwork {
 
     private void setOutputFinalLayer() {
     	
+    	Double biggestNeuronValue = 0.0;
+    	
         for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
             this.sigmaForOutputLayer[i] = 0.0;
         }
@@ -198,6 +232,15 @@ public class NeuralNetwork {
         	System.out.println("\nValores neuronios de saida:\n");
         	
         	for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
+        		// Verify the output value
+        		if(this.outputLayer[i] > biggestNeuronValue) {
+        			
+        			// Store value
+        			biggestNeuronValue = this.outputLayer[i];
+        			
+        			// Store index
+        			this.biggestNeuronValueIndex = i;
+        		}
             	System.out.println("Neuronio " + i + ": " + this.outputLayer[i] + "\n");
             }
         	
@@ -300,7 +343,8 @@ public class NeuralNetwork {
  			currentLine = this.fileController.getTrainingDatasetLine(i);
  			
  			// Handle each character of current line
- 			for(int j=0 ; j < currentLine.length() -1; j++) {
+ 			// Don't analize the last character
+ 			for(int j=0 ; j < currentLine.length() - 3; j++) {
  				
  				int posVerifyComma = j+1;
  				
@@ -333,9 +377,7 @@ public class NeuralNetwork {
  					//System.out.println("j:" + j);
  					//System.out.println("if=" + currentLine.charAt(j));					
  				}
- 				else {
- 					
- 					if(isLastNumber) {
+ 				else if(isLastNumber) {
  						isLastNumber= false;
  						// Copy to stored input layer
  						this.storedInputLayerTraining[i][j] = (double) Character.getNumericValue(currentLine.charAt(j));
@@ -343,8 +385,8 @@ public class NeuralNetwork {
  						//System.out.println("i:" + i);
  						//System.out.println("j:" + j);
  						//System.out.println("else=" + currentLine.charAt(j));	
- 					}
- 					else {
+ 				}
+ 				else {
  						
  						// Copy to expected output
  						this.storedExpectedOutputTraining[i][expectedOutputIndex] = (double) Character.getNumericValue(expectedOutputString.charAt(expectedOutputIndex));
@@ -355,8 +397,7 @@ public class NeuralNetwork {
  						//System.out.println("Index: " + expectedOutputIndex);
  						
  						expectedOutputIndex++;						
- 					}								
- 				}			
+ 				}								
  			}			
  		}
  		
@@ -380,4 +421,11 @@ public class NeuralNetwork {
  		
  		System.out.println("Terminou\n\n");*/
  	}
-}
+ 	
+ 	public void loadWeights() {
+ 		
+ 		this.weightsMatrixInputHidden = fileController.deserialize(1);
+ 		
+ 		this.weightsMatrixHiddenOutput = fileController.deserialize(2);
+ 	}
+ }
