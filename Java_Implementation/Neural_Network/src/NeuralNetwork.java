@@ -8,6 +8,7 @@ public class NeuralNetwork {
     private Double[] inputLayer;
     private Double[] hiddenLayer;
     private Double[] outputLayer;
+    private Double[] outputLayerNormalized;
 
     // Weights matrix input -> hidden
     private Double[][] weightsMatrixInputHidden;
@@ -24,6 +25,7 @@ public class NeuralNetwork {
     // Stored data
     private Double[][] storedInputLayerTraining;
     private Double[][] storedExpectedOutputTraining;
+    private char[] storedExpectedOutputTrainingChar;
 
     private Integer currentIteration;
     
@@ -53,6 +55,7 @@ public class NeuralNetwork {
         this.inputLayer = new Double[Params.getInputNeuronsQuantity() + 1];
         this.hiddenLayer = new Double[Params.getHiddenNeuronsQuantity() + 1];
         this.outputLayer = new Double[Params.getOutputNeuronsQuantity()];
+        this.outputLayerNormalized = new Double[Params.getOutputNeuronsQuantity()];
         // Set bias
         this.inputLayer[Params.getInputNeuronsQuantity()] = 1.0;
         this.hiddenLayer[Params.getHiddenNeuronsQuantity()] = 1.0;
@@ -64,6 +67,8 @@ public class NeuralNetwork {
      	this.storedInputLayerTraining = new Double[fileController.getQuantityOfLinesTrainingDataset()][Params.getInputNeuronsQuantity()];
      	// Stored expected values
      	this.storedExpectedOutputTraining = new Double[fileController.getQuantityOfLinesTrainingDataset()][Params.getOutputNeuronsQuantity()];
+     	// Stored expected values char
+     	storedExpectedOutputTrainingChar = new char[fileController.getQuantityOfLinesTrainingDataset()];
 
         this.weightsMatrixInputHidden = new Double[Params.getInputNeuronsQuantity() + 1][Params.getHiddenNeuronsQuantity()]; 
         this.weightsMatrixHiddenOutput = new Double[Params.getHiddenNeuronsQuantity() + 1][Params.getOutputNeuronsQuantity()];
@@ -94,7 +99,8 @@ public class NeuralNetwork {
         fileController.readDataset(Params.getTestFile(), 2);
         
         // Initialize the data structure with the dataset files
-     	this.initializeTrainingDataset();
+     	this.initializeTrainingDataset();     	
+     	this.initializeTrainingDatasetChar();
     }
 	
 	public int getBiggestNeuronValueIndex() {
@@ -161,25 +167,39 @@ public class NeuralNetwork {
     	
     	Double[] testInputDouble = new Double[Params.getInputNeuronsQuantity()];
     	
-		// For each line in test dataset    	
+    	//System.out.println(fileController.getTestDatasetLinesQuantity());
+    	
+    	// For each line in test dataset    	
     	for(int i=0 ; i<fileController.getTestDatasetLinesQuantity() ; i++) {
+    		
+    		this.isTesting = true;
     	
     		String testInput = fileController.getTestDatasetLine(i);
+    		//System.out.println(testInput);
     		
     		// For each input neuron
     		for(int j=0 ; j<Params.getInputNeuronsQuantity() ; j++) {
     			
-    			System.out.println(testInput);
-    			
-    			testInputDouble[j] = (double) (testInput.charAt(j));
-    			
-    			//System.out.println(testInputDouble[j]);
+    			//System.out.println(testInput);    			
+    			testInputDouble[j] = (double) (testInput.charAt(j)-48);
+    			//System.out.print(testInputDouble[j]);    			
     		}
     		
     		System.arraycopy(testInputDouble, 0, this.inputLayer, 0, Params.getInputNeuronsQuantity());
+    		
+    		this.feedForward();
+            
+            int recognizedCharacterPos = verifyRecognizedCharacter();
+        	// Verify if it's a valid character
+        	if(recognizedCharacterPos != -1) {
+        		
+        		// Recognized
+        		System.out.println("\nReconheci o caracter " + this.storedExpectedOutputTrainingChar[recognizedCharacterPos] + "\n");
+        	} else {
+    			
+        		System.out.println("\nNao reconhecido\n");
+    		}
     	}        
-        
-        this.feedForward();
     }
 
     private void feedForward() {
@@ -244,7 +264,7 @@ public class NeuralNetwork {
             	System.out.println("Neuronio " + i + ": " + this.outputLayer[i] + "\n");
             }
         	
-        	this.isTesting = false;
+        	this.isTesting = false;        	
         }
     }    
 
@@ -420,6 +440,68 @@ public class NeuralNetwork {
  		}
  		
  		System.out.println("Terminou\n\n");*/
+ 	}
+ 	
+ 	// TODO Not the best way, merge with initializeTrainingDataset method
+ 	private void initializeTrainingDatasetChar() {
+ 		
+ 		String currentLine;
+ 		
+ 		// For each line
+ 		for(int i=0 ; i<this.fileController.getQuantityOfLinesTrainingDataset() ; i++) {
+ 			// Get current line
+ 			currentLine = this.fileController.getTrainingDatasetLine(i);
+ 			
+ 			storedExpectedOutputTrainingChar[i] = currentLine.charAt(currentLine.length()-1);
+ 		}
+ 			
+ 	}
+ 	
+ 	private int verifyRecognizedCharacter() {
+ 		
+ 		int pos = -1, charactersCounter = 0;;
+ 		
+ 		// Normalize
+ 		for(int i=0 ; i < Params.getOutputNeuronsQuantity() ; i++) {
+ 			this.outputLayerNormalized[i] = (double) 0;
+ 		}
+ 		
+ 		this.outputLayerNormalized[this.biggestNeuronValueIndex] = 1.0;
+ 		
+ 		/*System.out.println("Normalized:");
+ 		for(int i=0 ; i < Params.getOutputNeuronsQuantity() ; i++) {
+ 			System.out.println(this.outputLayerNormalized[i]);
+ 		}*/
+ 		
+ 		/*System.out.println("Expected:");
+ 		for(int i=0 ; i < Params.getOutputNeuronsQuantity() ; i++) {
+ 			System.out.println(this.storedExpectedOutputTraining[0][i]);
+ 		}*/
+ 		
+ 		 		
+ 		// For each line of training dataset
+ 		for(int i=0 ; i < fileController.getQuantityOfLinesTrainingDataset() ; i++) {
+ 			charactersCounter = 0;
+ 			for(int j=0 ; j<Params.getOutputNeuronsQuantity() ; j++) {
+ 				//System.out.println(this.outputLayerNormalized[j] + "--" + this.storedExpectedOutputTraining[i][j]);
+ 				if((double)this.outputLayerNormalized[j] == (double)this.storedExpectedOutputTraining[i][j]) {
+ 					charactersCounter++;
+ 				}
+ 				else {
+ 					break;
+ 				}
+ 			}
+ 			//System.out.println("--" + charactersCounter);
+ 			if(charactersCounter == Params.getOutputNeuronsQuantity()) {
+ 				pos = i;
+ 				break;
+ 			}
+ 		}
+ 		
+ 		this.biggestNeuronValueIndex = -1;
+ 		
+ 		// If reached here, the character was recognizes
+ 		return pos;
  	}
  	
  	public void loadWeights() {

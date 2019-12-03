@@ -150,8 +150,13 @@ public class FileController {
 	// Returns a specific line of test dataset
 	public String getTestDatasetLine(int lineNumber) {
 			
-		if(lineNumber >=0 && lineNumber<=quantityOfLinesTestDataset)
-			return this.testDataset[lineNumber];
+		if(lineNumber >=0 && lineNumber<=quantityOfLinesTestDataset) {
+			
+			String[] cutLine = this.testDataset[lineNumber].split(",");
+			
+			return cutLine[0];
+		}
+			
 		else
 			return null;
 	}

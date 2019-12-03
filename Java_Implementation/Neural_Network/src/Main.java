@@ -35,10 +35,8 @@ public class Main {
 			break;
 	
 			case 2:
-				if(testAvailable) {
-					
+				if(testAvailable) {					
 					neuralNetwork.test();
-
 				}
 				else {
 					System.out.println("\nA rede precisa treinar primeiro!\n\n");
@@ -50,7 +48,7 @@ public class Main {
 				
 				neuralNetwork.loadWeights();
 				
-				System.out.println("Pesos carregados!\n");
+				System.out.println("\nPesos carregados!\n");
 				
 				testAvailable = true;
 				
