@@ -194,10 +194,10 @@ public class NeuralNetwork {
         	if(recognizedCharacterPos != -1) {
         		
         		// Recognized
-        		System.out.println("\nReconheci o caracter " + this.storedExpectedOutputTrainingChar[recognizedCharacterPos] + "\n");
+        		System.out.println("\nLinha de teste " + i + " - Reconheci o caracter " + this.storedExpectedOutputTrainingChar[recognizedCharacterPos] + "\n");
         	} else {
     			
-        		System.out.println("\nNao reconhecido\n");
+        		System.out.println("\nLinha de teste " + i + " - Nao reconhecido\n");
     		}
     	}        
     }
@@ -249,7 +249,7 @@ public class NeuralNetwork {
         
         if(this.isTesting) {
         	
-        	System.out.println("\nValores neuronios de saida:\n");
+        	//System.out.println("\nValores neuronios de saida:\n");
         	
         	for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
         		// Verify the output value
@@ -261,7 +261,7 @@ public class NeuralNetwork {
         			// Store index
         			this.biggestNeuronValueIndex = i;
         		}
-            	System.out.println("Neuronio " + i + ": " + this.outputLayer[i] + "\n");
+            	//System.out.println("Neuronio " + i + ": " + this.outputLayer[i] + "\n");
             }
         	
         	this.isTesting = false;        	
