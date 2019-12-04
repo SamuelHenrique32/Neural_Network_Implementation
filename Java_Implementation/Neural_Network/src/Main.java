@@ -9,7 +9,7 @@ public class Main {
 	
 	public static void showMenuOptions() {
 		
-		System.out.println("################### Rede Neural Artificial Para Reconhecimento De Caracteres ASCII ###################");
+		System.out.println("\n################### Rede Neural Artificial Para Reconhecimento De Caracteres ASCII ###################");
 		System.out.println("Alunos: Samuel H. Dalmas e Maria Carolina\n\n");
 		System.out.println("Opcoes:\n");
 		System.out.println("1- Treinar Rede Neural");

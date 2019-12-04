@@ -698,6 +698,9 @@ public class NeuralNetwork {
  		
  		System.out.println("\nMetricas:\n");
  		
+ 		System.out.println("Colunas: Acuracia, Erro, Sensitividade, Precisao, Especificidade, Roc TPR, Roc FPR");
+ 		System.out.println("Linhas: Caracteres\n");
+ 		
  		for(int i=0 ; i<Params.getOutputNeuronsQuantity(); i++) {
  			for(int j=0 ; j<6 ; j++) {
  	 			
@@ -708,19 +711,19 @@ public class NeuralNetwork {
  		
  	}
  	
- 	private double calculateAcuracy(int vp, int vn, int fp, int fn) {
+ 	private double calculateAcuracy(double vp, double vn, double fp, double fn) {
  		
  		return(vp+vn)/(vp+fp+vn+fn);
  	}
  	
- 	private double calculateErrorAcuracy(int vp, int vn, int fp, int fn) {
+ 	private double calculateErrorAcuracy(double vp, double vn, double fp, double fn) {
  		
  		return 1-(calculateAcuracy(vp, vn, fp, fn));
  	}
  	
- 	private double calculateSensitivity(int vp, int fn) {
+ 	private double calculateSensitivity(double vp, double fn) {
  		
- 		int denominator = vp+fn;
+ 		double denominator = vp+fn;
  		
  		if(denominator>0) {
  			return (vp)/(denominator);
@@ -729,9 +732,9 @@ public class NeuralNetwork {
  		}
  	}
  	
- 	private double calculatePrecision(int vp, int fp) {
+ 	private double calculatePrecision(double vp, double fp) {
  		
- 		int denominator = vp+fp;
+ 		double denominator = vp+fp;
  		
  		if(denominator>0) {
  			return (vp)/(denominator);	
@@ -740,14 +743,14 @@ public class NeuralNetwork {
  		} 		
  	}
  	
- 	private double calculateSpecificity(int vn, int fp) {
+ 	private double calculateSpecificity(double vn, double fp) {
  		
  		return (vn)/(vn+fp);
  	}
  	
- 	private double calculateRocTPR(int vp, int fn) {
+ 	private double calculateRocTPR(double vp, double fn) {
  		
- 		int denominator = vp+fn;
+ 		double denominator = vp+fn;
  		
  		if(denominator>0) {
  			return (vp)/(denominator);	
@@ -756,7 +759,7 @@ public class NeuralNetwork {
  		} 		
  	}
  	
- 	private double calculateRocFPR(int vn, int fp) {
+ 	private double calculateRocFPR(double vn, double fp) {
  		
  		return (fp)/(vn+fp);
  	}
