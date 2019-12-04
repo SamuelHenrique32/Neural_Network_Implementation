@@ -707,7 +707,42 @@ public class NeuralNetwork {
  				System.out.print(this.calculatedValues[i][j] + " ");
  	 		}
  			System.out.println();
- 		} 		
+ 		}
+ 		
+ 		// Acuracy
+ 		/*for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
+			System.out.print(this.calculatedValues[i][0]+",");
+		}*/
+ 		
+ 		// Error
+ 	 	/*for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
+ 	 		System.out.print(this.calculatedValues[i][1]+",");
+ 		}*/
+ 		
+ 		// Sensitivity
+ 	 	/*for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
+ 	 		System.out.print(this.calculatedValues[i][2]+",");
+ 		}*/
+ 		
+ 		// Precision
+ 	 	/*for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
+ 	 		System.out.print(this.calculatedValues[i][3]+",");
+ 		}*/
+ 		
+ 		// Specificity
+ 	 	/*for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
+ 	 		System.out.print(this.calculatedValues[i][4]+",");
+ 		}*/
+ 		
+ 		// ROC TPR
+ 	 	/*for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
+ 	 		System.out.print(this.calculatedValues[i][5]+",");
+ 		}
+ 	 	System.out.println("\n");
+ 	 	// ROC FPR
+ 	 	for (int i = 0; i < Params.getOutputNeuronsQuantity(); i++) {
+ 	 		System.out.print(this.calculatedValues[i][6]+",");
+ 		}*/
  		
  	}
  	
