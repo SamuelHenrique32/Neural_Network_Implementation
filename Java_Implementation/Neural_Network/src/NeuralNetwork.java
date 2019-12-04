@@ -36,6 +36,8 @@ public class NeuralNetwork {
  	
  	// Store the index of the neuron with the biggest output value
  	private int biggestNeuronValueIndex;
+ 	
+ 	private int[][] confusionMatrix;
 
     // Constructor method    
     public NeuralNetwork() throws IOException {
@@ -75,6 +77,8 @@ public class NeuralNetwork {
         
         this.difWeightsInputHidden = new Double[Params.getInputNeuronsQuantity() + 1][Params.getHiddenNeuronsQuantity()];
         this.difWeightsHiddenOutput = new Double[Params.getHiddenNeuronsQuantity() + 1][Params.getOutputNeuronsQuantity()];
+        
+        this.confusionMatrix = new int[Params.getOutputNeuronsQuantity()][Params.getOutputNeuronsQuantity()];
         
         this.biggestNeuronValueIndex = 0;
 
@@ -194,12 +198,43 @@ public class NeuralNetwork {
         	if(recognizedCharacterPos != -1) {
         		
         		// Recognized
-        		System.out.println("\nLinha de teste " + i + " - Reconheci o caracter " + this.storedExpectedOutputTrainingChar[recognizedCharacterPos] + "\n");
+        		System.out.println("\nLinha de teste " + i + " - Reconheci o caracter " + this.storedExpectedOutputTrainingChar[recognizedCharacterPos]);
+        		if(fileController.getTestDatasetExpectedValue(i) != null) {
+        			System.out.println("Caractere esperado: " + fileController.getTestDatasetExpectedValue(i) + "\n");
+        		} else {
+        			System.out.println("Caractere esperado: o caractere nao pertence ao dataset \n");
+        		}
+        		
+        		// Confusion matrix
+        		if(fileController.getTestDatasetExpectedValue(i) != null) {
+        			// What was recognized == What really is 
+            		if(this.storedExpectedOutputTrainingChar[recognizedCharacterPos] == fileController.getTestDatasetExpectedValue(i).charAt(0)) {
+            			int line = verifyIndexConfusionMatrix(this.storedExpectedOutputTrainingChar[recognizedCharacterPos]);
+            			//System.out.println(verifyIndexConfusionMatrix(this.storedExpectedOutputTrainingChar[recognizedCharacterPos]));
+            			// Verdadeiro positivo
+            			
+            			// Increment the value
+            			confusionMatrix[line][line] += 1;        			
+            		} else {
+            			
+            			// What was recognized
+            			int line = verifyIndexConfusionMatrix(this.storedExpectedOutputTrainingChar[recognizedCharacterPos]);
+            			
+            			// What really is        			
+            			int col = verifyIndexConfusionMatrix(fileController.getTestDatasetExpectedValue(i).charAt(0));
+            			
+            			this.confusionMatrix[line][col] += 1;
+            		}	
+        		}
         	} else {
     			
         		System.out.println("\nLinha de teste " + i + " - Nao reconhecido\n");
     		}
-    	}        
+        	
+        	this.showConfusionMatrix();
+    	}      
+    	
+    	//this.showConfusionMatrix();
     }
 
     private void feedForward() {
@@ -502,6 +537,34 @@ public class NeuralNetwork {
  		
  		// If reached here, the character was recognizes
  		return pos;
+ 	}
+ 	
+ 	void showConfusionMatrix() {
+ 		
+ 		for(int i=0 ; i<Params.getOutputNeuronsQuantity(); i++) {
+ 			for(int j=0 ; j<Params.getOutputNeuronsQuantity(); j++) {
+ 	 			
+ 				System.out.print(this.confusionMatrix[i][j] + " ");
+ 	 		}
+ 			System.out.println();
+ 		} 		
+ 	}
+ 	
+ 	int verifyIndexConfusionMatrix(char character) {
+ 		
+ 		for(int i=0 ; i<fileController.getQuantityOfLinesTestDataset() ; i++) {
+ 			if(character == this.storedExpectedOutputTrainingChar[i]) {
+ 				// Return the pos correspondent in confusion matrix
+ 				for(int j=0 ; j<Params.getOutputNeuronsQuantity() ; j++) {
+ 					if(this.storedExpectedOutputTraining[i][j] == 1) {
+ 						// Pos to insert the value in confusion matrix
+ 						return j;
+ 					}
+ 				} 				
+ 			}
+ 		}
+ 		
+ 		return -1;
  	}
  	
  	public void loadWeights() {

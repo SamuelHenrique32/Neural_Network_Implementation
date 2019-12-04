@@ -161,6 +161,23 @@ public class FileController {
 			return null;
 	}
 	
+	// Returns a specific expected value of test dataset
+	public String getTestDatasetExpectedValue(int lineNumber) {
+				
+		if(lineNumber >=0 && lineNumber<=quantityOfLinesTestDataset) {
+				
+			String[] cutLine = this.testDataset[lineNumber].split(",");
+			
+			if(cutLine.length>=2) {
+				return cutLine[1];	
+			} else {
+				return null;
+			}			
+		} else {
+			return null;			
+		}
+	}
+	
 	public boolean serialize(int type, Double[][] matrix){
 		
 		try {
