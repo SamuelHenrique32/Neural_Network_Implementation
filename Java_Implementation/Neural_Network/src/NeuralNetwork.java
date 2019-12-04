@@ -596,6 +596,22 @@ public class NeuralNetwork {
  		//System.out.println(this.analysesValues[lineNumber][1]);
  	}
  	
+ 	void calculateFN(char character, int lineNumber) {
+ 		
+ 		int line = verifyIndexConfusionMatrix(character);
+ 		
+ 		// Sum all the values of the line less the principal diagonal
+ 	 	for(int i=0 ; i<Params.getOutputNeuronsQuantity() ; i++) {
+ 	 		
+ 	 		// Not to the principal diagonal
+ 			if(i!=line) {
+
+ 				this.analysesValues[lineNumber][3] += this.confusionMatrix[line][i];
+ 			}
+ 	 	} 	 	
+ 	 	//System.out.println(this.analysesValues[lineNumber][3]);
+ 	}
+ 	
  	void analyseFinalValues() {
  		
  		// For each character
@@ -604,6 +620,8 @@ public class NeuralNetwork {
  			this.calculateVP(this.storedExpectedOutputTrainingChar[i], i);
  			
  			this.calculateFP(this.storedExpectedOutputTrainingChar[i], i);
+ 			
+ 			this.calculateFN(this.storedExpectedOutputTrainingChar[i], i);
  			
  			this.showAnalyseValues();
  		}
