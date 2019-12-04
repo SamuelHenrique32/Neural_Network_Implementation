@@ -38,6 +38,9 @@ public class NeuralNetwork {
  	private int biggestNeuronValueIndex;
  	
  	private int[][] confusionMatrix;
+ 	
+ 	// Verdadeiro positivo, falso positivo, verdadeiro negativo, falso negativo
+ 	private int [][] analysesValues;
 
     // Constructor method    
     public NeuralNetwork() throws IOException {
@@ -79,6 +82,8 @@ public class NeuralNetwork {
         this.difWeightsHiddenOutput = new Double[Params.getHiddenNeuronsQuantity() + 1][Params.getOutputNeuronsQuantity()];
         
         this.confusionMatrix = new int[Params.getOutputNeuronsQuantity()][Params.getOutputNeuronsQuantity()];
+        
+        this.analysesValues = new int[Params.getOutputNeuronsQuantity()][4];
         
         this.biggestNeuronValueIndex = 0;
 
@@ -231,10 +236,12 @@ public class NeuralNetwork {
         		System.out.println("\nLinha de teste " + i + " - Nao reconhecido\n");
     		}
         	
-        	this.showConfusionMatrix();
+        	//this.showConfusionMatrix();
     	}      
     	
-    	//this.showConfusionMatrix();
+    	this.showConfusionMatrix();
+    	
+    	this.analyseFinalValues();
     }
 
     private void feedForward() {
@@ -565,6 +572,37 @@ public class NeuralNetwork {
  		}
  		
  		return -1;
+ 	}
+ 	
+ 	void calculateVP(char character, int lineNumber) {
+ 		
+ 		int index = verifyIndexConfusionMatrix(character);
+ 		
+ 		this.analysesValues[lineNumber][0] = this.confusionMatrix[index][index];
+ 	}
+ 	
+ 	void analyseFinalValues() {
+ 		
+ 		// For each character
+ 		for(int i=0 ; i<fileController.getQuantityOfLinesTrainingDataset() ; i++) {
+ 			
+ 			this.calculateVP(this.storedExpectedOutputTrainingChar[i], i);
+ 			
+ 			this.showAnalyseValues();
+ 		}
+ 	}
+ 	
+ 	void showAnalyseValues() {
+ 		
+ 		System.out.println("\nAnalyse Values:\n");
+ 		
+ 		for(int i=0 ; i<fileController.getQuantityOfLinesTrainingDataset(); i++) {
+ 			for(int j=0 ; j<4; j++) {
+ 	 			
+ 				System.out.print(this.analysesValues[i][j]);
+ 	 		}
+ 			System.out.println();
+ 		} 	
  	}
  	
  	public void loadWeights() {
