@@ -242,6 +242,8 @@ public class NeuralNetwork {
     	this.showConfusionMatrix();
     	
     	this.analyseFinalValues();
+    	
+    	this.showAnalyseValues();
     }
 
     private void feedForward() {
@@ -596,6 +598,18 @@ public class NeuralNetwork {
  		//System.out.println(this.analysesValues[lineNumber][1]);
  	}
  	
+ 	void calculateVN(char character, int lineNumber) {
+ 		
+ 		// Sum all the VP less the current VP
+ 		for(int i=0 ; i<Params.getOutputNeuronsQuantity() ; i++) {
+ 			
+ 			if(i!=lineNumber) {
+ 				this.analysesValues[lineNumber][2] += this.analysesValues[i][0];
+ 				//System.out.println("Somar " + this.analysesValues[i][0]);
+ 			} 			
+ 		}
+ 	}
+ 	
  	void calculateFN(char character, int lineNumber) {
  		
  		int line = verifyIndexConfusionMatrix(character);
@@ -621,10 +635,18 @@ public class NeuralNetwork {
  			
  			this.calculateFP(this.storedExpectedOutputTrainingChar[i], i);
  			
+ 			//this.calculateVN(this.storedExpectedOutputTrainingChar[i], i);
+ 			
  			this.calculateFN(this.storedExpectedOutputTrainingChar[i], i);
  			
- 			this.showAnalyseValues();
+ 			//this.showAnalyseValues();
  		}
+ 		
+ 		// It's necessary to calculate the other values first
+ 	 	for(int i=0 ; i<fileController.getQuantityOfLinesTrainingDataset() ; i++) {
+ 	 		
+ 	 		this.calculateVN(this.storedExpectedOutputTrainingChar[i], i);
+ 	 	}
  	}
  	
  	void showAnalyseValues() {
@@ -634,7 +656,7 @@ public class NeuralNetwork {
  		for(int i=0 ; i<fileController.getQuantityOfLinesTrainingDataset(); i++) {
  			for(int j=0 ; j<4; j++) {
  	 			
- 				System.out.print(this.analysesValues[i][j]);
+ 				System.out.print(this.analysesValues[i][j] + " ");
  	 		}
  			System.out.println();
  		} 	
