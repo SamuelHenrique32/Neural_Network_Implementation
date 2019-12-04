@@ -41,6 +41,9 @@ public class NeuralNetwork {
  	
  	// Verdadeiro positivo, falso positivo, verdadeiro negativo, falso negativo
  	private int [][] analysesValues;
+ 	
+ 	// Acuracia, erro, sensitividade, precisao, especificidade, ROC: TPR, FPR
+ 	private int [][] calculatedValues;
 
     // Constructor method    
     public NeuralNetwork() throws IOException {
@@ -84,6 +87,9 @@ public class NeuralNetwork {
         this.confusionMatrix = new int[Params.getOutputNeuronsQuantity()][Params.getOutputNeuronsQuantity()];
         
         this.analysesValues = new int[Params.getOutputNeuronsQuantity()][4];
+        
+        // Acuracia, erro, sensitividade, precisao, especificidade, ROC: TPR, FPR
+     	this.calculatedValues = new int[Params.getOutputNeuronsQuantity()][7];
         
         this.biggestNeuronValueIndex = 0;
 
@@ -660,6 +666,41 @@ public class NeuralNetwork {
  	 		}
  			System.out.println();
  		} 	
+ 	}
+ 	
+ 	private double calculateAcuracy(int vp, int vn, int fp, int fn) {
+ 		
+ 		return(vp+vn)/(vp+fp+vn+fn);
+ 	}
+ 	
+ 	private double calculateErrorAcuracy(int vp, int vn, int fp, int fn) {
+ 		
+ 		return 1-(calculateAcuracy(vp, vn, fp, fn));
+ 	}
+ 	
+ 	private double calculateSensitivity(int vp, int fn) {
+ 		
+ 		return (vp)/(vp+fn);
+ 	}
+ 	
+ 	private double calculatePrecision(int vp, int fp) {
+ 		
+ 		return (vp)/(vp+fp);
+ 	}
+ 	
+ 	private double calculateSpecificity(int vn, int fp) {
+ 		
+ 		return (vn)/(vn+fp);
+ 	}
+ 	
+ 	private double calculateRocTPR(int vp, int fn) {
+ 		
+ 		return (vp)/(vp+fn);
+ 	}
+ 	
+ 	private double calculateRocFpr(int vn, int fp) {
+ 		
+ 		return (fp)/(vn+fp);
  	}
  	
  	public void loadWeights() {
