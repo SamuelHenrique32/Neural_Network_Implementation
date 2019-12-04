@@ -43,7 +43,7 @@ public class NeuralNetwork {
  	private int [][] analysesValues;
  	
  	// Acuracia, erro, sensitividade, precisao, especificidade, ROC: TPR, FPR
- 	private int [][] calculatedValues;
+ 	private double [][] calculatedValues;
 
     // Constructor method    
     public NeuralNetwork() throws IOException {
@@ -89,7 +89,7 @@ public class NeuralNetwork {
         this.analysesValues = new int[Params.getOutputNeuronsQuantity()][4];
         
         // Acuracia, erro, sensitividade, precisao, especificidade, ROC: TPR, FPR
-     	this.calculatedValues = new int[Params.getOutputNeuronsQuantity()][7];
+     	this.calculatedValues = new double[Params.getOutputNeuronsQuantity()][7];
         
         this.biggestNeuronValueIndex = 0;
 
@@ -250,6 +250,10 @@ public class NeuralNetwork {
     	this.analyseFinalValues();
     	
     	this.showAnalyseValues();
+    	
+    	this.calculateMetrics();
+    	
+    	this.showMetrics();
     }
 
     private void feedForward() {
@@ -556,6 +560,8 @@ public class NeuralNetwork {
  	
  	void showConfusionMatrix() {
  		
+ 		System.out.println("\nMatriz de Confusao:\n");
+ 		
  		for(int i=0 ; i<Params.getOutputNeuronsQuantity(); i++) {
  			for(int j=0 ; j<Params.getOutputNeuronsQuantity(); j++) {
  	 			
@@ -668,6 +674,40 @@ public class NeuralNetwork {
  		} 	
  	}
  	
+ 	private void calculateMetrics() {
+ 		
+ 		for(int i=0 ; i<fileController.getQuantityOfLinesTrainingDataset() ; i++) {
+ 			
+ 			this.calculatedValues[i][0] = this.calculateAcuracy(this.analysesValues[i][0], this.analysesValues[i][2], this.analysesValues[i][1], this.analysesValues[i][3]);
+ 			
+ 			this.calculatedValues[i][1] = this.calculateErrorAcuracy(this.analysesValues[i][0], this.analysesValues[i][2], this.analysesValues[i][1], this.analysesValues[i][3]);
+ 			
+ 			this.calculatedValues[i][2] = this.calculateSensitivity(this.analysesValues[i][0], this.analysesValues[i][3]);
+ 			
+ 			this.calculatedValues[i][3] = this.calculatePrecision(this.analysesValues[i][0], this.analysesValues[i][1]);
+ 			
+ 			this.calculatedValues[i][4] = this.calculateSpecificity(this.analysesValues[i][2], this.analysesValues[i][1]);
+ 			
+ 			this.calculatedValues[i][5] = this.calculateRocTPR(this.analysesValues[i][0], this.analysesValues[i][3]);
+ 			
+ 			this.calculatedValues[i][6] = this.calculateRocFPR(this.analysesValues[i][2], this.analysesValues[i][1]);
+ 		}
+ 	}
+ 	
+ 	private void showMetrics() {
+ 		
+ 		System.out.println("\nMetricas:\n");
+ 		
+ 		for(int i=0 ; i<Params.getOutputNeuronsQuantity(); i++) {
+ 			for(int j=0 ; j<6 ; j++) {
+ 	 			
+ 				System.out.print(this.calculatedValues[i][j] + " ");
+ 	 		}
+ 			System.out.println();
+ 		} 		
+ 		
+ 	}
+ 	
  	private double calculateAcuracy(int vp, int vn, int fp, int fn) {
  		
  		return(vp+vn)/(vp+fp+vn+fn);
@@ -680,12 +720,24 @@ public class NeuralNetwork {
  	
  	private double calculateSensitivity(int vp, int fn) {
  		
- 		return (vp)/(vp+fn);
+ 		int denominator = vp+fn;
+ 		
+ 		if(denominator>0) {
+ 			return (vp)/(denominator);
+ 		} else {
+ 			return 0;
+ 		}
  	}
  	
  	private double calculatePrecision(int vp, int fp) {
  		
- 		return (vp)/(vp+fp);
+ 		int denominator = vp+fp;
+ 		
+ 		if(denominator>0) {
+ 			return (vp)/(denominator);	
+ 		} else {
+ 			return 0;
+ 		} 		
  	}
  	
  	private double calculateSpecificity(int vn, int fp) {
@@ -695,10 +747,16 @@ public class NeuralNetwork {
  	
  	private double calculateRocTPR(int vp, int fn) {
  		
- 		return (vp)/(vp+fn);
+ 		int denominator = vp+fn;
+ 		
+ 		if(denominator>0) {
+ 			return (vp)/(denominator);	
+ 		} else {
+ 			return 0;
+ 		} 		
  	}
  	
- 	private double calculateRocFpr(int vn, int fp) {
+ 	private double calculateRocFPR(int vn, int fp) {
  		
  		return (fp)/(vn+fp);
  	}
